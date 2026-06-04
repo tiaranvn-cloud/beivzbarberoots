@@ -1,0 +1,2629 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beivz Barber Roots</title>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
+<style>
+:root{--coral:#D85A30;--coral-light:#FAECE7;--coral-mid:#F0997B;--coral-dark:#4A1B0C;--ink:#1A1A1A;--ink-mid:#444441;--muted:#888780;--surface:#FFF9F6;--white:#FFFFFF;--border:rgba(216,90,48,0.15);--border-strong:rgba(216,90,48,0.3);--success:#3B6D11;--success-bg:#EAF3DE;--danger:#A32D2D;--danger-bg:#FCEBEB;--amber:#BA7517;--amber-bg:#FAEEDA;--info:#185FA5;--info-bg:#E6F1FB;--purple:#534AB7;--purple-bg:#EEEDFE;--r:12px;--rsm:8px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;}
+
+/* HEADER */
+.app-header{background:var(--ink);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--coral);}
+.app-logo{font-family:'Abril Fatface',serif;font-size:20px;color:#fff;display:flex;align-items:center;gap:8px;}
+.logo-dot{width:8px;height:8px;background:var(--coral);border-radius:50%;display:inline-block;}
+.app-version{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);}
+
+/* NAV */
+.app-nav{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 2rem;overflow-x:auto;}
+.nav-item{padding:0 18px;height:46px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;user-select:none;}
+.nav-item:hover{color:var(--coral);}
+.nav-item.active{color:var(--coral);border-bottom-color:var(--coral);font-weight:600;}
+
+/* MAIN */
+.app-main{flex:1;padding:1.75rem 2rem;max-width:1280px;width:100%;margin:0 auto;}
+
+/* PAGE */
+.page{display:none;}
+.page.active{display:block;}
+
+.page-header{margin-bottom:1.25rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.page-title{font-family:'Abril Fatface',serif;font-size:26px;color:var(--ink);line-height:1;}
+.page-subtitle{font-size:12px;color:var(--muted);margin-top:3px;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.25rem;}
+.stat-card{background:var(--coral-light);border-radius:var(--rsm);padding:.9rem 1.1rem;border:1px solid var(--border);}
+.stat-label{font-size:10px;font-weight:600;color:var(--coral);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;}
+.stat-value{font-family:'Abril Fatface',serif;font-size:24px;color:var(--coral-dark);line-height:1;}
+.stat-meta{font-size:11px;color:var(--muted);margin-top:3px;}
+
+/* CARDS */
+.card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);padding:1.25rem;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rsm);font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.btn-primary{background:var(--coral);color:#fff;border-color:var(--coral);}
+.btn-primary:hover{background:#C04E27;}
+.btn-outline{background:transparent;color:var(--ink-mid);border-color:var(--border-strong);}
+.btn-outline:hover{background:var(--coral-light);color:var(--coral);border-color:var(--coral);}
+.btn-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger);}
+.btn-danger:hover{background:var(--danger);color:#fff;}
+.btn-success{background:var(--success-bg);color:var(--success);border-color:var(--success);} 
+.btn-success:hover{background:var(--success);color:#fff;}
+.btn-amber{background:var(--amber-bg);color:var(--amber);border-color:var(--amber);}
+.btn-sm{padding:4px 9px;font-size:11px;border-radius:6px;}
+.btn-xs{padding:3px 7px;font-size:11px;border-radius:5px;}
+.btn-group{display:flex;gap:5px;flex-wrap:wrap;}
+
+/* TABLES */
+.table-wrap{overflow-x:auto;border-radius:var(--rsm);border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{background:var(--ink);color:#fff;padding:9px 12px;text-align:left;font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--coral-light);}
+tbody td{padding:9px 12px;color:var(--ink-mid);vertical-align:middle;}
+
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
+.form-group input,.form-group select,.form-group textarea{padding:8px 11px;border-radius:var(--rsm);border:1px solid var(--border-strong);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--white);outline:none;transition:border-color .15s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(216,90,48,.1);}
+.form-group input[readonly]{background:#f8f5f2;color:var(--muted);}
+.form-actions{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap;}
+
+/* PRODUCT ROWS */
+.product-rows{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+.product-row{display:grid;grid-template-columns:2fr 70px 110px 100px 28px;gap:6px;align-items:end;}
+.product-row .pr-total{font-size:12px;color:var(--coral);font-weight:600;padding:8px 0;white-space:nowrap;}
+.add-product-row{display:flex;align-items:center;gap:8px;margin-top:4px;}
+.product-rows-header{display:grid;grid-template-columns:2fr 70px 110px 100px 28px;gap:6px;margin-bottom:4px;}
+.product-rows-header span{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+
+/* PAYMENT SECTION */
+.payment-section{border:1px solid var(--border-strong);border-radius:var(--rsm);padding:1rem;margin-top:.75rem;background:var(--coral-light);}
+.payment-section .sec-title{font-size:11px;font-weight:600;color:var(--coral);text-transform:uppercase;letter-spacing:.7px;margin-bottom:.75rem;}
+.payment-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px;}
+.payment-row.total-row{border-top:1px solid var(--border-strong);margin-top:6px;padding-top:8px;font-weight:600;}
+.payment-row .lbl{color:var(--muted);}
+.payment-row .val{font-weight:600;color:var(--ink);}
+.payment-row .val.coral{color:var(--coral);}
+.payment-row .val.green{color:var(--success);}
+.payment-row .val.red{color:var(--danger);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-konsinyasi{background:var(--amber-bg);color:var(--amber);}
+.badge-beli-putus{background:var(--success-bg);color:var(--success);}
+.badge-prospek{background:var(--info-bg);color:var(--info);}
+.badge-tidak-aktif{background:#F1EFE8;color:#5F5E5A;}
+.badge-lunas{background:var(--success-bg);color:var(--success);}
+.badge-sebagian{background:var(--amber-bg);color:var(--amber);}
+.badge-belum{background:var(--danger-bg);color:var(--danger);}
+.badge-gray{background:#F1EFE8;color:#5F5E5A;}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center;}
+.search-input{flex:1;min-width:180px;padding:8px 11px 8px 34px;border-radius:var(--rsm);border:1px solid var(--border-strong);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23888780' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;}
+.search-input:focus{border-color:var(--coral);}
+
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:var(--r);width:100%;max-width:600px;max-height:92vh;overflow-y:auto;border:2px solid var(--coral);}
+.modal-lg{max-width:760px;}
+.modal-header{padding:1.1rem 1.4rem .9rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1;}
+.modal-title{font-family:'Abril Fatface',serif;font-size:17px;color:var(--ink);}
+.modal-body{padding:1.25rem 1.4rem;}
+.modal-footer{padding:.75rem 1.4rem 1.1rem;display:flex;gap:8px;border-top:1px solid var(--border);flex-wrap:wrap;}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);padding:4px;display:flex;line-height:1;}
+.modal-close:hover{color:var(--danger);}
+
+/* SECTION TITLE */
+.sec-title-bar{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin:1rem 0 .6rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
+
+/* DETAIL VIEW */
+.detail-block{background:var(--coral-light);border-radius:var(--rsm);padding:.9rem 1.1rem;margin-bottom:.75rem;}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:4px 0;font-size:13px;border-bottom:1px solid var(--border);}
+.detail-row:last-child{border-bottom:none;}
+.detail-row .dk{color:var(--muted);font-size:12px;flex:0 0 140px;}
+.detail-row .dv{font-weight:500;text-align:right;flex:1;}
+.detail-products-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px;}
+.detail-products-table th{background:var(--ink);color:#fff;padding:6px 10px;text-align:left;font-size:10px;text-transform:uppercase;}
+.detail-products-table td{padding:7px 10px;border-bottom:1px solid var(--border);}
+.detail-products-table tr:last-child td{border-bottom:none;}
+.payment-history-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.payment-history-item:last-child{border-bottom:none;}
+
+/* TABS */
+.tab-row{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.25rem;}
+.tab-btn{padding:7px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.tab-btn.active{color:var(--coral);border-bottom-color:var(--coral);font-weight:600;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted);}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:.4;}
+
+/* MISC */
+.mono{font-family:'Space Mono',monospace;font-size:11px;}
+.text-coral{color:var(--coral);font-weight:600;}
+.text-muted{color:var(--muted);}
+.text-right{text-align:right;}
+.text-sm{font-size:12px;}
+.fw6{font-weight:600;}
+.flex{display:flex;}.gap-6{gap:6px;}.gap-8{gap:8px;}.mt-1{margin-top:1rem;}
+.divider{border:none;border-top:1px solid var(--border);margin:.75rem 0;}
+
+@media(max-width:600px){
+  .app-main{padding:1rem;}
+  .page-title{font-size:22px;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .product-row{grid-template-columns:1fr 60px;}
+}
+
+/* PRINT */
+@media print{
+  body>*:not(#print-zone){display:none!important;}
+  #print-zone{display:block!important;}
+}
+#print-zone{display:none;}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-logo"><span class="logo-dot"></span>Beivz Barber Roots</div>
+  <span class="app-version">v2.3</span>
+</header>
+
+<nav class="app-nav">
+  <div class="nav-item active" onclick="nav('barber')" data-page="barber">✂ Data Barber</div>
+  <div class="nav-item" onclick="nav('penjualan')" data-page="penjualan">🛒 Data Penjualan</div>
+  <div class="nav-item" onclick="nav('konsinyasi')" data-page="konsinyasi">📦 Konsinyasi</div>
+  <div class="nav-item" onclick="nav('riwayat')" data-page="riwayat">📋 Riwayat</div>
+  <div class="nav-item" onclick="nav('settings')" data-page="settings">⚙ Pengaturan Invoice</div>
+</nav>
+
+<main class="app-main">
+
+<!-- ===== BARBER ===== -->
+<div id="page-barber" class="page active">
+  <div class="page-header">
+    <div><h1 class="page-title">Data Barber</h1><p class="page-subtitle">Kelola mitra barbershop BEIVZ</p></div>
+    <div class="btn-group">
+      <button class="btn btn-outline" onclick="exportPDFBarber()">⬇ Export PDF</button>
+      <button class="btn btn-primary" onclick="openAddBarber()">+ Tambah Barber</button>
+    </div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Total Barber</div><div class="stat-value" id="sb-total">0</div><div class="stat-meta">Terdaftar</div></div>
+    <div class="stat-card"><div class="stat-label">Konsinyasi</div><div class="stat-value" id="sb-kons">0</div><div class="stat-meta">Mitra tipe konsinyasi</div></div>
+    <div class="stat-card"><div class="stat-label">Beli Putus</div><div class="stat-value" id="sb-bp">0</div><div class="stat-meta">Mitra tipe beli putus</div></div>
+    <div class="stat-card"><div class="stat-label">Prospek</div><div class="stat-value" id="sb-prospek">0</div><div class="stat-meta">Calon mitra</div></div>
+  </div>
+  <div class="card">
+    <div class="toolbar">
+      <input class="search-input" id="s-barber" placeholder="Cari nama, kota, pemilik..." oninput="renderBarber()">
+      <select class="btn btn-outline" id="f-barber-status" onchange="renderBarber()" style="cursor:pointer">
+        <option value="">Semua Status</option>
+        <option>Konsinyasi</option><option>Beli Putus</option><option>Prospek</option><option>Tidak Aktif</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Nama Barbershop</th><th>Pemilik</th><th>Kota</th><th>Telepon</th><th>Bergabung</th><th>Tipe</th><th>Aksi</th></tr></thead>
+        <tbody id="tb-barber"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PENJUALAN ===== -->
+<div id="page-penjualan" class="page">
+  <div class="page-header">
+    <div><h1 class="page-title">Data Penjualan</h1><p class="page-subtitle">Catat transaksi penjualan produk BEIVZ</p></div>
+    <div class="btn-group">
+      <button class="btn btn-outline" onclick="exportPDFPenjualan()">⬇ Export PDF</button>
+      <button class="btn btn-primary" onclick="openAddPenjualan()">+ Tambah Penjualan</button>
+    </div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Total Transaksi</div><div class="stat-value" id="sp-total">0</div><div class="stat-meta">Semua invoice</div></div>
+    <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value" id="sp-rev" style="font-size:17px">Rp 0</div><div class="stat-meta">Gross sales</div></div>
+    <div class="stat-card"><div class="stat-label">Sudah Dibayar</div><div class="stat-value" id="sp-bayar" style="font-size:17px">Rp 0</div><div class="stat-meta">Terkumpul</div></div>
+    <div class="stat-card"><div class="stat-label">Sisa Tagihan</div><div class="stat-value" id="sp-sisa" style="font-size:17px;color:var(--danger)">Rp 0</div><div class="stat-meta">Outstanding</div></div>
+  </div>
+  <div class="card">
+    <div class="toolbar">
+      <input class="search-input" id="s-penjualan" placeholder="Cari invoice, barber, produk..." oninput="renderPenjualan()">
+      <select class="btn btn-outline" id="f-p-bayar" onchange="renderPenjualan()" style="cursor:pointer">
+        <option value="">Semua Bayar</option>
+        <option value="lunas">Lunas</option><option value="sebagian">Dibayar Sebagian</option><option value="belum">Belum Dibayar</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Invoice</th><th>Tanggal</th><th>Barber</th><th>Items</th><th>Total</th><th>Dibayar</th><th>Sisa</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody id="tb-penjualan"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== KONSINYASI ===== -->
+<div id="page-konsinyasi" class="page">
+  <div class="page-header">
+    <div><h1 class="page-title">Konsinyasi</h1><p class="page-subtitle">Stok titipan dan penagihan</p></div>
+    <div class="btn-group">
+      <button class="btn btn-outline" onclick="exportPDFKonsinyasi()">⬇ Export PDF</button>
+      <button class="btn btn-primary" onclick="openAddKons()">+ Kirim Konsinyasi</button>
+    </div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Titipan Aktif</div><div class="stat-value" id="sk-aktif">0</div><div class="stat-meta">Barbershop</div></div>
+    <div class="stat-card"><div class="stat-label">Stok Dikirim</div><div class="stat-value" id="sk-kirim">0</div><div class="stat-meta">Total pcs</div></div>
+    <div class="stat-card"><div class="stat-label">Total Nilai Kirim</div><div class="stat-value" id="sk-nilai" style="font-size:17px">Rp 0</div><div class="stat-meta">Semua barber</div></div>
+    <div class="stat-card"><div class="stat-label">Belum Dibayar</div><div class="stat-value" id="sk-hutang" style="font-size:17px;color:var(--danger)">Rp 0</div><div class="stat-meta">Outstanding</div></div>
+  </div>
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="switchKTab('stok',this)">Stok Konsinyasi</button>
+    <button class="tab-btn" onclick="switchKTab('tagihan',this)">Tagihan & Retur</button>
+  </div>
+  <div id="ktab-stok" class="tab-content active">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Barbershop</th><th>Produk</th><th>Dikirim</th><th>Terjual</th><th>Sisa</th><th>Nilai Kirim</th><th>Tgl Kirim</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody id="tb-kons"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="ktab-tagihan" class="tab-content">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Barbershop</th><th>Produk</th><th>Terjual</th><th>Nilai</th><th>Dibayar</th><th>Sisa</th><th>Jatuh Tempo</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody id="tb-tagihan"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RIWAYAT ===== -->
+<div id="page-riwayat" class="page">
+  <div class="page-header">
+    <div><h1 class="page-title">Riwayat Penjualan</h1><p class="page-subtitle">Histori semua transaksi</p></div>
+    <div class="btn-group">
+      <button class="btn btn-outline" onclick="exportPDFRiwayat()">⬇ Export PDF</button>
+      <button class="btn btn-outline" onclick="printPage()">🖨 Cetak</button>
+    </div>
+  </div>
+
+  <div id="recovery-banner" style="display:none;background:var(--amber-bg);border:1px solid var(--amber);border-radius:var(--rsm);padding:1rem 1.25rem;margin-bottom:1rem;font-size:13px">
+    <div style="font-weight:600;color:var(--amber);margin-bottom:4px">⚠ Data Penjualan Tidak Ditemukan</div>
+    <div style="color:var(--ink-mid);margin-bottom:.75rem">Data yang kamu input sebelumnya mungkin tersimpan di versi lama aplikasi. Klik tombol di bawah untuk mencoba memulihkan data.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-amber btn-sm" onclick="tryRecoverData()">🔄 Coba Pulihkan Data</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('recovery-banner').style.display='none'">Tutup</button>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <div class="sec-title-bar">Filter</div>
+    <div class="form-grid">
+      <div class="form-group"><label>Dari Tanggal</label><input type="date" id="rw-dari" onchange="renderRiwayat()"></div>
+      <div class="form-group"><label>Sampai</label><input type="date" id="rw-sampai" onchange="renderRiwayat()"></div>
+      <div class="form-group"><label>Barber</label><select id="rw-barber" onchange="renderRiwayat()"><option value="">Semua</option></select></div>
+      <div class="form-group"><label>Status Bayar</label><select id="rw-status" onchange="renderRiwayat()"><option value="">Semua</option><option value="lunas">Lunas</option><option value="sebagian">Sebagian</option><option value="belum">Belum</option></select></div>
+    </div>
+  </div>
+  <div class="stats-grid" style="margin-bottom:1rem">
+    <div class="stat-card"><div class="stat-label">Hasil</div><div class="stat-value" id="rw-count">0</div><div class="stat-meta">Transaksi</div></div>
+    <div class="stat-card"><div class="stat-label">Total Nilai</div><div class="stat-value" id="rw-total" style="font-size:17px">Rp 0</div><div class="stat-meta">Filter saat ini</div></div>
+    <div class="stat-card"><div class="stat-label">Terkumpul</div><div class="stat-value" id="rw-bayar" style="font-size:17px">Rp 0</div><div class="stat-meta">Sudah dibayar</div></div>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Invoice</th><th>Tanggal</th><th>Barber</th><th>Items</th><th>Total</th><th>Dibayar</th><th>Sisa</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody id="tb-riwayat"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div id="page-settings" class="page">
+  <div class="page-header">
+    <div><h1 class="page-title">Pengaturan Invoice</h1><p class="page-subtitle">Informasi penerbit yang tampil di semua dokumen invoice</p></div>
+    <button class="btn btn-primary" onclick="saveSettings()">💾 Simpan Pengaturan</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:1.25rem">
+      <div class="card">
+        <div class="sec-title-bar" style="margin-top:0">Identitas Perusahaan</div>
+        <div class="form-grid" style="grid-template-columns:1fr">
+          <div class="form-group"><label>Nama CV / Perusahaan</label><input type="text" id="cfg-cv" placeholder="CV. Beivz Indonesia"></div>
+          <div class="form-group"><label>Brand / Nama Usaha</label><input type="text" id="cfg-brand" placeholder="BEIVZ"></div>
+          <div class="form-group"><label>Nama Owner (untuk Nota)</label><input type="text" id="cfg-owner" placeholder="Habib Muhammad"></div>
+          <div class="form-group"><label>Tagline / Sub-brand</label><input type="text" id="cfg-tagline" placeholder="Barber Roots · beivz.id"></div>
+          <div class="form-group"><label>Alamat Lengkap</label><textarea id="cfg-alamat" rows="2" placeholder="Jl. ..."></textarea></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-title-bar" style="margin-top:0">Kontak</div>
+        <div class="form-grid" style="grid-template-columns:1fr">
+          <div class="form-group"><label>Email</label><input type="email" id="cfg-email" placeholder="hello@beivz.id"></div>
+          <div class="form-group"><label>No. Handphone / WhatsApp</label><input type="text" id="cfg-hp" placeholder="0812-xxxx-xxxx"></div>
+          <div class="form-group"><label>Website</label><input type="text" id="cfg-web" placeholder="beivz.id"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-title-bar" style="margin-top:0">Detail Pembayaran</div>
+        <div class="form-grid" style="grid-template-columns:1fr">
+          <div class="form-group"><label>Nama Bank</label><input type="text" id="cfg-bank" placeholder="BCA / Mandiri / dll"></div>
+          <div class="form-group"><label>Nomor Rekening</label><input type="text" id="cfg-rekening" placeholder="1234567890"></div>
+          <div class="form-group"><label>Atas Nama</label><input type="text" id="cfg-atasnama" placeholder="Nama pemilik rekening"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:1.25rem">
+      <div class="card">
+        <div class="sec-title-bar" style="margin-top:0">Logo Invoice</div>
+        <div id="logo-preview-area" style="margin-bottom:.75rem;min-height:90px;border:1px dashed var(--border-strong);border-radius:var(--rsm);display:flex;align-items:center;justify-content:center;background:var(--coral-light)">
+          <span id="logo-placeholder" style="font-size:12px;color:var(--muted)">Belum ada logo</span>
+          <img id="logo-preview-img" style="max-height:80px;max-width:220px;display:none;border-radius:6px;padding:8px;object-fit:contain" alt="Logo">
+        </div>
+        <div class="form-group">
+          <label>Upload Logo (PNG / JPG)</label>
+          <input type="file" id="cfg-logo-file" accept="image/*" onchange="handleLogoUpload(this)">
+        </div>
+        <p class="text-sm text-muted" style="margin-top:6px">Disarankan: lebar 300–600px, PNG transparan</p>
+        <button class="btn btn-danger btn-sm" style="margin-top:.6rem" onclick="clearLogo()">✕ Hapus Logo</button>
+      </div>
+      <div class="card">
+        <div class="sec-title-bar" style="margin-top:0">Default Invoice</div>
+        <div class="form-grid" style="grid-template-columns:1fr">
+          <div class="form-group"><label>Syarat Pembayaran (hari)</label><input type="number" id="cfg-terms" placeholder="14" min="0"></div>
+          <div class="form-group"><label>Catatan Default Invoice</label><textarea id="cfg-notes" rows="3" placeholder="Contoh: Mohon transfer sebelum jatuh tempo. Terima kasih atas kepercayaan Anda."></textarea></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-title-bar" style="margin-top:0">Preview Header Invoice</div>
+        <div id="settings-preview" style="border:1px solid var(--border);border-radius:var(--rsm);padding:1rem;background:#fff;min-height:80px"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:.75rem" onclick="refreshSettingsPreview()">↻ Refresh Preview</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- ===================== MODALS ===================== -->
+
+<!-- BARBER: Add/Edit -->
+<div class="modal-overlay" id="m-barber">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="m-barber-title">Tambah Barber</span>
+      <button class="modal-close" onclick="closeModal('m-barber')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eb-id">
+      <div class="form-grid">
+        <div class="form-group"><label>Nama Barbershop *</label><input type="text" id="eb-nama" placeholder="contoh: Kings Barber"></div>
+        <div class="form-group"><label>Nama Pemilik *</label><input type="text" id="eb-pemilik" placeholder="Nama lengkap"></div>
+        <div class="form-group"><label>Kota *</label><input type="text" id="eb-kota" placeholder="Jakarta, Bogor..."></div>
+        <div class="form-group"><label>Alamat</label><input type="text" id="eb-alamat" placeholder="Jl. ..."></div>
+        <div class="form-group"><label>No. Telepon</label><input type="text" id="eb-telp" placeholder="08xx-xxxx-xxxx"></div>
+        <div class="form-group"><label>Instagram</label><input type="text" id="eb-ig" placeholder="@nama"></div>
+        <div class="form-group"><label>Tanggal Bergabung</label><input type="date" id="eb-join"></div>
+        <div class="form-group"><label>Tipe Kerjasama *</label>
+          <select id="eb-status">
+            <option value="Konsinyasi">Konsinyasi</option>
+            <option value="Beli Putus">Beli Putus</option>
+            <option value="Prospek">Prospek</option>
+            <option value="Tidak Aktif">Tidak Aktif</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group mt-1"><label>Catatan</label><textarea id="eb-catatan" rows="2" placeholder="Catatan tambahan..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="saveBarber()">Simpan</button>
+      <button class="btn btn-outline" onclick="closeModal('m-barber')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- BARBER: Detail -->
+<div class="modal-overlay" id="m-barber-detail">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">Detail Barbershop</span>
+      <button class="modal-close" onclick="closeModal('m-barber-detail')">✕</button>
+    </div>
+    <div class="modal-body" id="barber-detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="barber-detail-edit-btn">✏ Edit</button>
+      <button class="btn btn-outline" onclick="closeModal('m-barber-detail')">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- PENJUALAN: Add/Edit -->
+<div class="modal-overlay" id="m-penjualan">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title" id="m-penj-title">Catat Penjualan</span>
+      <button class="modal-close" onclick="closeModal('m-penjualan')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ep-id">
+      <div class="form-grid">
+        <div class="form-group"><label>No. Invoice</label><input type="text" id="ep-invoice" readonly></div>
+        <div class="form-group"><label>Tanggal *</label><input type="date" id="ep-tgl"></div>
+        <div class="form-group"><label>Barbershop *</label><select id="ep-barber"><option value="">— Pilih —</option></select></div>
+        <div class="form-group"><label>Tipe</label><select id="ep-tipe"><option>Beli Putus</option><option>Konsinyasi</option></select></div>
+      </div>
+
+      <div class="sec-title-bar" style="margin-top:1rem">Produk</div>
+      <div class="product-rows-header">
+        <span>Produk</span><span>Qty</span><span>Harga Satuan</span><span>Subtotal</span><span></span>
+      </div>
+      <div id="product-rows"></div>
+      <div style="display:flex;gap:8px;margin-top:6px;align-items:center">
+        <button class="btn btn-outline btn-sm" onclick="addProductRow()">+ Tambah Produk</button>
+        <button class="btn btn-outline btn-sm" onclick="openManageProds('m-penjualan')" style="color:var(--muted)">⚙ Kelola Produk</button>
+      </div>
+
+      <div class="sec-title-bar" style="margin-top:1rem">Pembayaran</div>
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:span 2">
+          <label>Total Invoice</label>
+          <input type="text" id="ep-total-display" readonly style="font-weight:700;color:var(--coral);font-size:15px;">
+        </div>
+      </div>
+      <div class="form-grid" style="margin-top:.6rem">
+        <div class="form-group"><label>Dibayar Sekarang (Rp)</label><input type="number" id="ep-bayar" placeholder="0" oninput="calcPayment()"></div>
+        <div class="form-group"><label>Tanggal Bayar</label><input type="date" id="ep-tgl-bayar"></div>
+        <div class="form-group"><label>Metode</label>
+          <select id="ep-metode"><option>Transfer</option><option>Cash</option><option>QRIS</option><option>Belum Bayar</option></select>
+        </div>
+      </div>
+      <div id="ep-payment-summary" class="payment-section" style="margin-top:.75rem"></div>
+
+      <div class="form-group mt-1"><label>Catatan</label><textarea id="ep-catatan" rows="2" placeholder="Catatan order..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="savePenjualan()">Simpan</button>
+      <button class="btn btn-outline" onclick="closeModal('m-penjualan')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- PENJUALAN: Detail -->
+<div class="modal-overlay" id="m-penj-detail">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">Detail Transaksi</span>
+      <button class="modal-close" onclick="closeModal('m-penj-detail')">✕</button>
+    </div>
+    <div class="modal-body" id="penj-detail-body"></div>
+    <div class="modal-footer" id="penj-detail-footer"></div>
+  </div>
+</div>
+
+<!-- PENJUALAN: Tambah Pembayaran -->
+<div class="modal-overlay" id="m-add-payment">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <span class="modal-title">Tambah Pembayaran</span>
+      <button class="modal-close" onclick="closeModal('m-add-payment')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ap-trx-id">
+      <div id="ap-summary" class="payment-section" style="margin-bottom:1rem"></div>
+      <div class="form-grid">
+        <div class="form-group"><label>Jumlah Bayar (Rp) *</label><input type="number" id="ap-jumlah" placeholder="0"></div>
+        <div class="form-group"><label>Tanggal</label><input type="date" id="ap-tgl"></div>
+        <div class="form-group"><label>Metode</label><select id="ap-metode"><option>Transfer</option><option>Cash</option><option>QRIS</option></select></div>
+        <div class="form-group"><label>Catatan</label><input type="text" id="ap-catatan" placeholder="opsional"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="doAddPayment()">Simpan Pembayaran</button>
+      <button class="btn btn-outline" onclick="closeModal('m-add-payment')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- KONSINYASI: Add/Edit -->
+<div class="modal-overlay" id="m-kons">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title" id="m-kons-title">Kirim Konsinyasi</span>
+      <button class="modal-close" onclick="closeModal('m-kons')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ek-id">
+      <div class="form-grid">
+        <div class="form-group"><label>Barbershop *</label><select id="ek-barber"><option value="">— Pilih —</option></select></div>
+        <div class="form-group"><label>Tanggal Kirim</label><input type="date" id="ek-tgl"></div>
+        <div class="form-group"><label>Jatuh Tempo</label><input type="date" id="ek-jatuh"></div>
+      </div>
+
+      <div class="sec-title-bar" style="margin-top:1rem">Produk Dikirim</div>
+      <div class="product-rows-header" style="grid-template-columns:2fr 70px 120px 28px">
+        <span>Produk</span><span>Qty</span><span>Harga/pcs</span><span></span>
+      </div>
+      <div id="kons-product-rows"></div>
+      <div style="display:flex;gap:8px;margin-top:6px;align-items:center">
+        <button class="btn btn-outline btn-sm" onclick="addKonsProductRow()">+ Tambah Produk</button>
+        <button class="btn btn-outline btn-sm" onclick="openManageProds('m-kons')" style="color:var(--muted)">⚙ Kelola Produk</button>
+      </div>
+
+      <div class="form-group mt-1"><label>Catatan</label><textarea id="ek-catatan" rows="2" placeholder="Catatan pengiriman..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="saveKons()">Simpan</button>
+      <button class="btn btn-outline" onclick="closeModal('m-kons')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- KONSINYASI: Update Terjual & Bayar Sebagian -->
+<div class="modal-overlay" id="m-kons-update">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <span class="modal-title">Update Konsinyasi</span>
+      <button class="modal-close" onclick="closeModal('m-kons-update')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ku-id">
+      <div id="ku-info" class="detail-block" style="margin-bottom:.75rem"></div>
+      <div class="tab-row" style="margin-bottom:.75rem">
+        <button class="tab-btn active" onclick="switchKUTab('terjual',this)">Update Terjual</button>
+        <button class="tab-btn" onclick="switchKUTab('bayar',this)">Catat Pembayaran</button>
+        <button class="tab-btn" onclick="switchKUTab('retur',this)">Retur Stok</button>
+      </div>
+      <div id="kutab-terjual" class="tab-content active">
+        <p class="text-sm text-muted" style="margin-bottom:.75rem">Masukkan jumlah terjual tambahan per produk.</p>
+        <div id="ku-terjual-rows"></div>
+      </div>
+      <div id="kutab-bayar" class="tab-content">
+        <div class="form-grid">
+          <div class="form-group"><label>Jumlah Bayar (Rp)</label><input type="number" id="ku-bayar" placeholder="0"></div>
+          <div class="form-group"><label>Tanggal</label><input type="date" id="ku-tgl-bayar"></div>
+          <div class="form-group"><label>Metode</label><select id="ku-metode"><option>Transfer</option><option>Cash</option><option>QRIS</option></select></div>
+        </div>
+      </div>
+      <div id="kutab-retur" class="tab-content">
+        <p class="text-sm text-muted" style="margin-bottom:.75rem">Masukkan qty dikembalikan per produk.</p>
+        <div id="ku-retur-rows"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="doKonsUpdate()">Simpan</button>
+      <button class="btn btn-outline" onclick="closeModal('m-kons-update')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVOICE -->
+<div class="modal-overlay" id="m-invoice">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">Invoice</span>
+      <button class="modal-close" onclick="closeModal('m-invoice')">✕</button>
+    </div>
+    <div class="modal-body" id="invoice-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="printInvoice()">🖨 Cetak</button>
+      <button class="btn btn-outline" onclick="exportInvoicePDF()">⬇ PDF</button>
+      <button class="btn btn-outline" onclick="openInvoiceEdit()">✏ Edit Invoice</button>
+      <button class="btn btn-outline" onclick="closeModal('m-invoice')">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVOICE EDIT -->
+<div class="modal-overlay" id="m-invoice-edit">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">Edit Template Invoice</span>
+      <button class="modal-close" onclick="closeModal('m-invoice-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="text-sm text-muted" style="margin-bottom:1rem">Pengaturan ini hanya berlaku untuk invoice ini saja. Untuk default semua invoice, ubah di menu <strong>Pengaturan Invoice</strong>.</p>
+      <input type="hidden" id="ie-trx-id">
+      <div class="sec-title-bar" style="margin-top:0">Informasi Invoice</div>
+      <div class="form-grid">
+        <div class="form-group"><label>No. Invoice</label><input type="text" id="ie-invoice"></div>
+        <div class="form-group"><label>Tanggal Invoice</label><input type="date" id="ie-tgl"></div>
+        <div class="form-group"><label>Due Date / Jatuh Tempo</label><input type="date" id="ie-due"></div>
+        <div class="form-group"><label>Tipe</label><select id="ie-tipe"><option>Beli Putus</option><option>Konsinyasi</option></select></div>
+      </div>
+      <div class="sec-title-bar">Override Penerbit (opsional)</div>
+      <p class="text-sm text-muted" style="margin-bottom:.75rem">Kosongkan untuk menggunakan data dari Pengaturan Invoice.</p>
+      <div class="form-grid">
+        <div class="form-group"><label>Nama CV / Perusahaan</label><input type="text" id="ie-cv" placeholder="Gunakan default"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="ie-email" placeholder="Gunakan default"></div>
+        <div class="form-group"><label>No. Handphone</label><input type="text" id="ie-hp" placeholder="Gunakan default"></div>
+        <div class="form-group"><label>Nama Bank</label><input type="text" id="ie-bank" placeholder="Gunakan default"></div>
+        <div class="form-group"><label>No. Rekening</label><input type="text" id="ie-rekening" placeholder="Gunakan default"></div>
+        <div class="form-group"><label>Atas Nama</label><input type="text" id="ie-atasnama" placeholder="Gunakan default"></div>
+      </div>
+      <div class="sec-title-bar">Catatan Invoice</div>
+      <div class="form-group"><label>Catatan (tampil di bawah invoice)</label><textarea id="ie-catatan" rows="3" placeholder="Catatan khusus untuk invoice ini..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="saveInvoiceEdit()">Simpan & Refresh Preview</button>
+      <button class="btn btn-outline" onclick="closeModal('m-invoice-edit')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- MANAGE PRODUCTS -->
+<div class="modal-overlay" id="m-manage-prods">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <span class="modal-title">Kelola Daftar Produk</span>
+      <button class="modal-close" onclick="closeModal('m-manage-prods')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="text-sm text-muted" style="margin-bottom:.75rem">Produk yang ditambahkan di sini akan muncul di semua dropdown produk.</p>
+      <div style="display:flex;gap:8px;margin-bottom:1rem">
+        <input type="text" id="new-prod-input" class="form-group" style="flex:1;padding:8px 11px;border-radius:var(--rsm);border:1px solid var(--border-strong);font-size:13px;font-family:'DM Sans',sans-serif;outline:none" placeholder="Nama produk baru..." onkeydown="if(event.key==='Enter')addCustomProd()">
+        <button class="btn btn-primary" onclick="addCustomProd()">+ Tambah</button>
+      </div>
+      <div class="sec-title-bar" style="margin-top:0">Daftar Produk</div>
+      <div id="prod-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('m-manage-prods')">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT NOTA KONSINYASI -->
+<div class="modal-overlay" id="m-edit-nota">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <span class="modal-title">Edit Nota Konsinyasi</span>
+      <button class="modal-close" onclick="closeModal('m-edit-nota')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="text-sm text-muted" style="margin-bottom:1rem">Pengaturan ini khusus untuk nota konsinyasi ini saja.</p>
+      <input type="hidden" id="en-kons-id">
+      <div class="form-grid">
+        <div class="form-group"><label>No. Nota (opsional)</label><input type="text" id="en-nota-no" placeholder="Auto: KONS-xxx"></div>
+        <div class="form-group"><label>Tanggal Kirim</label><input type="date" id="en-tgl"></div>
+        <div class="form-group"><label>Jatuh Tempo</label><input type="date" id="en-jatuh"></div>
+      </div>
+      <div class="form-group mt-1"><label>Catatan (tampil di nota)</label><textarea id="en-catatan" rows="3" placeholder="Catatan untuk barbershop ini..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="saveEditNota()">Simpan & Buka Nota</button>
+      <button class="btn btn-outline" onclick="closeModal('m-edit-nota')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTA KONSINYASI -->
+<div class="modal-overlay" id="m-nota-kons">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title">Nota Pengiriman Konsinyasi</span>
+      <button class="modal-close" onclick="closeModal('m-nota-kons')">✕</button>
+    </div>
+    <div class="modal-body" id="nota-kons-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="printNotaKons()">🖨 Cetak Nota</button>
+      <button class="btn btn-outline" onclick="exportNotaKonsPDF()">⬇ PDF</button>
+      <button class="btn btn-outline" onclick="closeModal('m-nota-kons');openEditNota(currentKonsId)">✏ Edit Nota</button>
+      <button class="btn btn-outline" onclick="closeModal('m-nota-kons')">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<div id="print-zone"></div>
+
+<script>
+const PRODS_DEFAULT = ['Oil-Based Pomade','Water-Based Pomade','Hair Clay','Hair Powder','Hair Perfume'];
+function getProds(){ return S.customProds && S.customProds.length ? S.customProds : [...PRODS_DEFAULT]; }
+
+let S = { barbers:[], penjualan:[], konsinyasi:[], invCounter:1, customProds:[] };
+let currentTrxId = null;
+
+function load(){
+  try{
+    // Try current key first
+    let x = localStorage.getItem('bbr-v2');
+    // If not found, try migrating from old key
+    if(!x) x = localStorage.getItem('beivz-barber-roots-v1');
+    if(x){
+      S = JSON.parse(x);
+      // Ensure required fields exist
+      if(!S.barbers) S.barbers = [];
+      if(!S.penjualan) S.penjualan = [];
+      if(!S.konsinyasi) S.konsinyasi = [];
+      if(!S.invCounter) S.invCounter = 1;
+      if(!S.customProds || !S.customProds.length) S.customProds = [...PRODS_DEFAULT];
+      // Re-save under new key if migrated
+      localStorage.setItem('bbr-v2', JSON.stringify(S));
+    }
+  }catch(e){ console.warn('Load error:', e); }
+}
+function save(){ localStorage.setItem('bbr-v2', JSON.stringify(S)); }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function uid(){ return Date.now() + Math.floor(Math.random()*1000); }
+
+// ========== MANAGE PRODUCTS ==========
+let _returnModal = '';
+function openManageProds(returnModal){
+  _returnModal = returnModal;
+  renderProdList();
+  openModal('m-manage-prods');
+}
+
+function renderProdList(){
+  const prods = getProds();
+  const el = document.getElementById('prod-list'); if(!el) return;
+  el.innerHTML = prods.map((p,i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-bottom:1px solid var(--border);font-size:13px">
+      <span>${p}</span>
+      <button onclick="deleteProd(${i})" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:2px 6px" title="Hapus">✕</button>
+    </div>
+  `).join('') || '<p class="text-sm text-muted" style="padding:.5rem">Belum ada produk.</p>';
+}
+
+function addCustomProd(){
+  const inp = document.getElementById('new-prod-input');
+  const val = inp.value.trim(); if(!val) return;
+  if(!S.customProds || !S.customProds.length) S.customProds = [...PRODS_DEFAULT];
+  if(S.customProds.includes(val)){ alert('Produk sudah ada!'); return; }
+  S.customProds.push(val);
+  save(); inp.value = '';
+  renderProdList();
+  // refresh all open dropdowns
+  refreshProdDropdowns();
+}
+
+function deleteProd(idx){
+  if(!confirm('Hapus produk dari daftar?')) return;
+  if(!S.customProds || !S.customProds.length) S.customProds = [...PRODS_DEFAULT];
+  S.customProds.splice(idx, 1);
+  if(!S.customProds.length) S.customProds = [...PRODS_DEFAULT];
+  save(); renderProdList(); refreshProdDropdowns();
+}
+
+function refreshProdDropdowns(){
+  // Refresh all product selects currently in DOM
+  ['pr','kpr'].forEach(prefix=>{
+    document.querySelectorAll(`[id^="${prefix}-prod-"]`).forEach(sel=>{
+      const cur = sel.value;
+      sel.innerHTML = `<option value="">— Pilih —</option>` + getProds().map(p=>`<option${p===cur?' selected':''}>${p}</option>`).join('');
+    });
+  });
+}
+
+// ========== NAV ==========
+function nav(pg){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+pg).classList.add('active');
+  document.querySelector(`[data-page="${pg}"]`).classList.add('active');
+  if(pg==='barber') renderBarber();
+  if(pg==='penjualan'){ fillBarberSel('ep-barber'); renderPenjualan(); }
+  if(pg==='konsinyasi'){ fillBarberSel('ek-barber'); renderKons(); renderTagihan(); updateKStats(); }
+  if(pg==='riwayat'){ fillRwFilters(); renderRiwayat(); }
+  if(pg==='settings') loadSettings();
+}
+
+// ========== MODAL ==========
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ========== BARBER ==========
+function barberStatusBadge(s){
+  const map={'Konsinyasi':'badge-konsinyasi','Beli Putus':'badge-beli-putus','Prospek':'badge-prospek','Tidak Aktif':'badge-tidak-aktif'};
+  return `<span class="badge ${map[s]||'badge-gray'}">${s}</span>`;
+}
+
+function openAddBarber(){
+  document.getElementById('m-barber-title').textContent='Tambah Barber';
+  ['eb-id','eb-nama','eb-pemilik','eb-kota','eb-alamat','eb-telp','eb-ig','eb-catatan'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('eb-join').value=today();
+  document.getElementById('eb-status').value='Konsinyasi';
+  openModal('m-barber');
+}
+
+function openEditBarber(id){
+  const b=S.barbers.find(x=>x.id===id); if(!b) return;
+  document.getElementById('m-barber-title').textContent='Edit Barber';
+  document.getElementById('eb-id').value=b.id;
+  document.getElementById('eb-nama').value=b.nama;
+  document.getElementById('eb-pemilik').value=b.pemilik;
+  document.getElementById('eb-kota').value=b.kota;
+  document.getElementById('eb-alamat').value=b.alamat||'';
+  document.getElementById('eb-telp').value=b.telp||'';
+  document.getElementById('eb-ig').value=b.ig||'';
+  document.getElementById('eb-join').value=b.join||'';
+  document.getElementById('eb-status').value=b.status;
+  document.getElementById('eb-catatan').value=b.catatan||'';
+  openModal('m-barber');
+}
+
+function saveBarber(){
+  const nama=document.getElementById('eb-nama').value.trim();
+  const pemilik=document.getElementById('eb-pemilik').value.trim();
+  const kota=document.getElementById('eb-kota').value.trim();
+  if(!nama||!pemilik||!kota){alert('Nama, pemilik, dan kota wajib diisi!');return;}
+  const editId=document.getElementById('eb-id').value;
+  const obj={ id: editId?parseInt(editId):uid(), nama, pemilik, kota,
+    alamat:document.getElementById('eb-alamat').value.trim(),
+    telp:document.getElementById('eb-telp').value.trim(),
+    ig:document.getElementById('eb-ig').value.trim(),
+    join:document.getElementById('eb-join').value||today(),
+    status:document.getElementById('eb-status').value,
+    catatan:document.getElementById('eb-catatan').value.trim(),
+  };
+  if(editId){ const i=S.barbers.findIndex(b=>b.id===obj.id); if(i>=0) S.barbers[i]=obj; }
+  else S.barbers.push(obj);
+  save(); closeModal('m-barber'); renderBarber();
+}
+
+function deleteBarber(id){
+  if(!confirm('Hapus data barber ini?')) return;
+  S.barbers=S.barbers.filter(b=>b.id!==id);
+  save(); renderBarber();
+}
+
+function showBarberDetail(id){
+  const b=S.barbers.find(x=>x.id===id); if(!b) return;
+  const trxList=S.penjualan.filter(p=>p.barberId===id);
+  const totalBeli=trxList.reduce((a,t)=>a+t.total,0);
+  const totalBayar=trxList.reduce((a,t)=>a+t.dibayar,0);
+  document.getElementById('barber-detail-body').innerHTML=`
+    <div class="detail-block">
+      <div class="detail-row"><span class="dk">Nama Barbershop</span><span class="dv fw6">${b.nama}</span></div>
+      <div class="detail-row"><span class="dk">Pemilik</span><span class="dv">${b.pemilik}</span></div>
+      <div class="detail-row"><span class="dk">Kota</span><span class="dv">${b.kota}</span></div>
+      <div class="detail-row"><span class="dk">Alamat</span><span class="dv">${b.alamat||'—'}</span></div>
+      <div class="detail-row"><span class="dk">Telepon</span><span class="dv">${b.telp||'—'}</span></div>
+      <div class="detail-row"><span class="dk">Instagram</span><span class="dv">${b.ig||'—'}</span></div>
+      <div class="detail-row"><span class="dk">Bergabung</span><span class="dv">${fDate(b.join)}</span></div>
+      <div class="detail-row"><span class="dk">Tipe Kerjasama</span><span class="dv">${barberStatusBadge(b.status)}</span></div>
+      ${b.catatan?`<div class="detail-row"><span class="dk">Catatan</span><span class="dv text-muted">${b.catatan}</span></div>`:''}
+    </div>
+    <div class="sec-title-bar">Riwayat Transaksi</div>
+    ${trxList.length===0?`<p class="text-muted text-sm">Belum ada transaksi.</p>`:`
+    <div class="payment-section">
+      <div class="payment-row"><span class="lbl">Total Transaksi</span><span class="val">${trxList.length} invoice</span></div>
+      <div class="payment-row"><span class="lbl">Total Nilai</span><span class="val coral">${fRp(totalBeli)}</span></div>
+      <div class="payment-row"><span class="lbl">Sudah Dibayar</span><span class="val green">${fRp(totalBayar)}</span></div>
+      <div class="payment-row"><span class="lbl">Sisa Tagihan</span><span class="val red">${fRp(totalBeli-totalBayar)}</span></div>
+    </div>
+    <div class="table-wrap" style="margin-top:.75rem">
+      <table>
+        <thead><tr><th>Invoice</th><th>Tanggal</th><th>Total</th><th>Status</th></tr></thead>
+        <tbody>${trxList.slice(-5).reverse().map(t=>`<tr><td class="mono">${t.invoice}</td><td>${fDate(t.tgl)}</td><td class="text-coral">${fRp(t.total)}</td><td>${payBadge(t)}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>`}
+  `;
+  document.getElementById('barber-detail-edit-btn').onclick=()=>{ closeModal('m-barber-detail'); openEditBarber(id); };
+  openModal('m-barber-detail');
+}
+
+function renderBarber(){
+  const q=(document.getElementById('s-barber').value||'').toLowerCase();
+  const fs=document.getElementById('f-barber-status').value;
+  const data=S.barbers.filter(b=>{
+    const ms=!q||b.nama.toLowerCase().includes(q)||b.kota.toLowerCase().includes(q)||b.pemilik.toLowerCase().includes(q);
+    const mf=!fs||b.status===fs;
+    return ms&&mf;
+  }).sort((a,b)=>a.nama.localeCompare(b.nama,'id'));
+  document.getElementById('sb-total').textContent=S.barbers.length;
+  document.getElementById('sb-kons').textContent=S.barbers.filter(b=>b.status==='Konsinyasi').length;
+  document.getElementById('sb-bp').textContent=S.barbers.filter(b=>b.status==='Beli Putus').length;
+  document.getElementById('sb-prospek').textContent=S.barbers.filter(b=>b.status==='Prospek').length;
+  const tb=document.getElementById('tb-barber');
+  if(!data.length){ tb.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">✂</div><p>Belum ada data barber.</p></div></td></tr>`; return; }
+  tb.innerHTML=data.map((b,i)=>`<tr>
+    <td class="mono">${i+1}</td>
+    <td><strong>${b.nama}</strong></td>
+    <td>${b.pemilik}</td>
+    <td>${b.kota}</td>
+    <td>${b.telp||'—'}</td>
+    <td>${fDate(b.join)}</td>
+    <td>${barberStatusBadge(b.status)}</td>
+    <td><div class="btn-group">
+      <button class="btn btn-outline btn-xs" onclick="showBarberDetail(${b.id})">Detail</button>
+      <button class="btn btn-outline btn-xs" onclick="openEditBarber(${b.id})">Edit</button>
+      <button class="btn btn-danger btn-xs" onclick="deleteBarber(${b.id})">Hapus</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+// ========== PENJUALAN ==========
+let productRowCount=0;
+function fillBarberSel(selId){
+  const sel=document.getElementById(selId);
+  if(!sel) return;
+  const cur=sel.value;
+  const sorted=[...S.barbers].sort((a,b)=>a.nama.localeCompare(b.nama,'id'));
+  sel.innerHTML='<option value="">— Pilih —</option>'+sorted.map(b=>`<option value="${b.id}">${b.nama}</option>`).join('');
+  sel.value=cur;
+}
+
+function genInvNo(){
+  const d=new Date(); const yy=String(d.getFullYear()).slice(2);
+  const mm=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0');
+  return `INV${yy}${mm}${dd}-${String(S.invCounter).padStart(3,'0')}`;
+}
+
+function addProductRow(produk='',qty='',harga=''){
+  productRowCount++;
+  const id=productRowCount;
+  const row=document.createElement('div');
+  row.className='product-row';
+  row.id='pr-'+id;
+  row.innerHTML=`
+    <div class="form-group" style="margin:0">
+      <select id="pr-prod-${id}" onchange="recalcTotal()" style="width:100%">
+        <option value="">— Pilih —</option>
+        ${getProds().map(p=>`<option${p===produk?' selected':''}>${p}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group" style="margin:0"><input type="number" id="pr-qty-${id}" value="${qty}" placeholder="0" min="1" oninput="recalcTotal()"></div>
+    <div class="form-group" style="margin:0"><input type="number" id="pr-hrg-${id}" value="${harga}" placeholder="Rp" oninput="recalcTotal()"></div>
+    <div class="pr-total" id="pr-sub-${id}">Rp 0</div>
+    <button type="button" onclick="removeProductRow(${id})" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:16px;padding:6px 4px;align-self:end">✕</button>
+  `;
+  document.getElementById('product-rows').appendChild(row);
+  recalcTotal();
+}
+
+function removeProductRow(id){
+  const el=document.getElementById('pr-'+id); if(el) el.remove();
+  recalcTotal();
+}
+
+function recalcTotal(){
+  let total=0;
+  document.querySelectorAll('[id^="pr-qty-"]').forEach(el=>{
+    const id=el.id.replace('pr-qty-','');
+    const qty=parseFloat(el.value)||0;
+    const hrg=parseFloat(document.getElementById('pr-hrg-'+id)?.value)||0;
+    const sub=qty*hrg;
+    const subEl=document.getElementById('pr-sub-'+id);
+    if(subEl) subEl.textContent=fRp(sub);
+    total+=sub;
+  });
+  document.getElementById('ep-total-display').value=fRp(total);
+  calcPayment();
+}
+
+function calcPayment(){
+  const total=getProductsTotal();
+  const bayar=parseFloat(document.getElementById('ep-bayar').value)||0;
+  const sisa=Math.max(0,total-bayar);
+  let statusBayar='belum';
+  if(bayar>=total&&total>0) statusBayar='lunas';
+  else if(bayar>0) statusBayar='sebagian';
+  document.getElementById('ep-payment-summary').innerHTML=`
+    <div class="sec-title" style="margin:0 0 .5rem">Ringkasan Pembayaran</div>
+    <div class="payment-row"><span class="lbl">Total Invoice</span><span class="val coral">${fRp(total)}</span></div>
+    <div class="payment-row"><span class="lbl">Dibayar Sekarang</span><span class="val green">${fRp(bayar)}</span></div>
+    <div class="payment-row total-row"><span class="lbl">Sisa Tagihan</span><span class="val red">${fRp(sisa)}</span></div>
+  `;
+}
+
+function getProductsTotal(){
+  let total=0;
+  document.querySelectorAll('[id^="pr-qty-"]').forEach(el=>{
+    const id=el.id.replace('pr-qty-','');
+    const qty=parseFloat(el.value)||0;
+    const hrg=parseFloat(document.getElementById('pr-hrg-'+id)?.value)||0;
+    total+=qty*hrg;
+  });
+  return total;
+}
+
+function collectProducts(){
+  const items=[];
+  document.querySelectorAll('[id^="pr-qty-"]').forEach(el=>{
+    const id=el.id.replace('pr-qty-','');
+    const produk=document.getElementById('pr-prod-'+id)?.value;
+    const qty=parseFloat(el.value)||0;
+    const harga=parseFloat(document.getElementById('pr-hrg-'+id)?.value)||0;
+    if(produk&&qty>0) items.push({produk,qty,harga,subtotal:qty*harga});
+  });
+  return items;
+}
+
+function openAddPenjualan(){
+  document.getElementById('m-penj-title').textContent='Catat Penjualan';
+  document.getElementById('ep-id').value='';
+  document.getElementById('ep-invoice').value=genInvNo();
+  document.getElementById('ep-tgl').value=today();
+  document.getElementById('ep-tgl-bayar').value=today();
+  document.getElementById('ep-bayar').value='';
+  document.getElementById('ep-catatan').value='';
+  document.getElementById('ep-metode').value='Transfer';
+  document.getElementById('product-rows').innerHTML='';
+  productRowCount=0;
+  addProductRow();
+  fillBarberSel('ep-barber');
+  calcPayment();
+  openModal('m-penjualan');
+}
+
+function openEditPenjualan(id){
+  const t=S.penjualan.find(x=>x.id===id); if(!t) return;
+  document.getElementById('m-penj-title').textContent='Edit Penjualan';
+  document.getElementById('ep-id').value=t.id;
+  document.getElementById('ep-invoice').value=t.invoice;
+  document.getElementById('ep-tgl').value=t.tgl;
+  document.getElementById('ep-catatan').value=t.catatan||'';
+  document.getElementById('ep-tipe').value=t.tipe||'Beli Putus';
+  document.getElementById('product-rows').innerHTML='';
+  productRowCount=0;
+  fillBarberSel('ep-barber');
+  document.getElementById('ep-barber').value=t.barberId;
+  (t.items||[]).forEach(item=>addProductRow(item.produk,item.qty,item.harga));
+  document.getElementById('ep-bayar').value='';
+  document.getElementById('ep-tgl-bayar').value=today();
+  recalcTotal();
+  openModal('m-penjualan');
+}
+
+function savePenjualan(){
+  const barberId=document.getElementById('ep-barber').value;
+  if(!barberId){alert('Pilih barbershop!');return;}
+  const items=collectProducts();
+  if(!items.length){alert('Tambahkan minimal 1 produk!');return;}
+  const total=items.reduce((a,i)=>a+i.subtotal,0);
+  const bayarBaru=parseFloat(document.getElementById('ep-bayar').value)||0;
+  const editId=document.getElementById('ep-id').value;
+  const barber=S.barbers.find(b=>b.id==barberId);
+
+  if(editId){
+    const t=S.penjualan.find(x=>x.id===parseInt(editId)); if(!t) return;
+    t.barberId=parseInt(barberId);
+    t.barberNama=barber?.nama||'—';
+    t.tgl=document.getElementById('ep-tgl').value;
+    t.items=items; t.total=total;
+    t.tipe=document.getElementById('ep-tipe').value;
+    t.catatan=document.getElementById('ep-catatan').value;
+    // recalculate dibayar from existing payments
+    t.dibayar=t.payments?.reduce((a,p)=>a+p.jumlah,0)||0;
+    // add new payment if entered
+    if(bayarBaru>0){
+      if(!t.payments) t.payments=[];
+      t.payments.push({jumlah:bayarBaru,tgl:document.getElementById('ep-tgl-bayar').value,metode:document.getElementById('ep-metode').value,catatan:''});
+      t.dibayar+=bayarBaru;
+    }
+  } else {
+    const payments=[];
+    if(bayarBaru>0) payments.push({jumlah:bayarBaru,tgl:document.getElementById('ep-tgl-bayar').value,metode:document.getElementById('ep-metode').value,catatan:''});
+    const t={
+      id:uid(), invoice:document.getElementById('ep-invoice').value,
+      tgl:document.getElementById('ep-tgl').value, barberId:parseInt(barberId), barberNama:barber?.nama||'—',
+      tipe:document.getElementById('ep-tipe').value, items, total,
+      dibayar:bayarBaru, payments,
+      catatan:document.getElementById('ep-catatan').value,
+    };
+    S.penjualan.push(t);
+    S.invCounter++;
+  }
+  save(); closeModal('m-penjualan'); renderPenjualan();
+}
+
+function deletePenjualan(id){
+  if(!confirm('Hapus transaksi ini?')) return;
+  S.penjualan=S.penjualan.filter(p=>p.id!==id);
+  save(); renderPenjualan();
+}
+
+function payBadge(t){
+  const sisa=t.total-(t.dibayar||0);
+  if(sisa<=0&&t.total>0) return `<span class="badge badge-lunas">Lunas</span>`;
+  if((t.dibayar||0)>0) return `<span class="badge badge-sebagian">Sebagian</span>`;
+  return `<span class="badge badge-belum">Belum Dibayar</span>`;
+}
+
+function payStatus(t){
+  const sisa=t.total-(t.dibayar||0);
+  if(sisa<=0&&t.total>0) return 'lunas';
+  if((t.dibayar||0)>0) return 'sebagian';
+  return 'belum';
+}
+
+function renderPenjualan(){
+  const q=(document.getElementById('s-penjualan').value||'').toLowerCase();
+  const fb=document.getElementById('f-p-bayar').value;
+  let data=S.penjualan.filter(p=>{
+    const ms=!q||p.invoice.toLowerCase().includes(q)||p.barberNama.toLowerCase().includes(q)||(p.items||[]).some(i=>i.produk.toLowerCase().includes(q));
+    const mb=!fb||payStatus(p)===fb;
+    return ms&&mb;
+  });
+  const totalRev=S.penjualan.reduce((a,p)=>a+p.total,0);
+  const totalBayar=S.penjualan.reduce((a,p)=>a+(p.dibayar||0),0);
+  document.getElementById('sp-total').textContent=S.penjualan.length;
+  document.getElementById('sp-rev').textContent=fRp(totalRev);
+  document.getElementById('sp-bayar').textContent=fRp(totalBayar);
+  document.getElementById('sp-sisa').textContent=fRp(totalRev-totalBayar);
+  const tb=document.getElementById('tb-penjualan');
+  if(!data.length){tb.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">🛒</div><p>Belum ada data penjualan.</p></div></td></tr>`;return;}
+  tb.innerHTML=data.sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(p=>{
+    const itemSummary=(p.items||[]).map(i=>`${i.produk.replace(' Pomade','').replace('Hair ','')}`).join(', ');
+    const sisa=p.total-(p.dibayar||0);
+    return `<tr>
+      <td class="mono">${p.invoice}</td>
+      <td>${fDate(p.tgl)}</td>
+      <td><strong>${p.barberNama}</strong></td>
+      <td class="text-sm text-muted">${(p.items||[]).length} item · ${itemSummary}</td>
+      <td class="text-coral">${fRp(p.total)}</td>
+      <td style="color:var(--success)">${fRp(p.dibayar||0)}</td>
+      <td style="color:var(--danger)">${fRp(sisa)}</td>
+      <td>${payBadge(p)}</td>
+      <td><div class="btn-group">
+        <button class="btn btn-outline btn-xs" onclick="showPenjualanDetail(${p.id})">Detail</button>
+        <button class="btn btn-amber btn-xs" onclick="openAddPayment(${p.id})">+ Bayar</button>
+        <button class="btn btn-outline btn-xs" onclick="openEditPenjualan(${p.id})">Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="deletePenjualan(${p.id})">Hapus</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function showPenjualanDetail(id){
+  const t=S.penjualan.find(x=>x.id===id); if(!t) return;
+  currentTrxId=id;
+  const sisa=t.total-(t.dibayar||0);
+  document.getElementById('penj-detail-body').innerHTML=`
+    <div class="detail-block">
+      <div class="detail-row"><span class="dk">Invoice</span><span class="dv mono">${t.invoice}</span></div>
+      <div class="detail-row"><span class="dk">Tanggal</span><span class="dv">${fDate(t.tgl)}</span></div>
+      <div class="detail-row"><span class="dk">Barbershop</span><span class="dv fw6">${t.barberNama}</span></div>
+      <div class="detail-row"><span class="dk">Tipe</span><span class="dv">${t.tipe||'—'}</span></div>
+      ${t.catatan?`<div class="detail-row"><span class="dk">Catatan</span><span class="dv text-muted">${t.catatan}</span></div>`:''}
+    </div>
+    <div class="sec-title-bar">Produk</div>
+    <div class="table-wrap">
+      <table class="detail-products-table">
+        <thead><tr><th>Produk</th><th>Qty</th><th>Harga</th><th>Subtotal</th></tr></thead>
+        <tbody>${(t.items||[]).map(i=>`<tr><td>${i.produk}</td><td>${i.qty}</td><td>${fRp(i.harga)}</td><td class="text-coral">${fRp(i.subtotal)}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="sec-title-bar">Status Pembayaran</div>
+    <div class="payment-section">
+      <div class="payment-row"><span class="lbl">Total Invoice</span><span class="val coral">${fRp(t.total)}</span></div>
+      <div class="payment-row"><span class="lbl">Total Dibayar</span><span class="val green">${fRp(t.dibayar||0)}</span></div>
+      <div class="payment-row total-row"><span class="lbl">Sisa Tagihan</span><span class="val red">${fRp(sisa)}</span></div>
+    </div>
+    ${(t.payments&&t.payments.length)?`
+    <div class="sec-title-bar">Riwayat Pembayaran</div>
+    <div style="border:1px solid var(--border);border-radius:var(--rsm);padding:.75rem">
+      ${t.payments.map((p,i)=>`<div class="payment-history-item">
+        <span>${i+1}. ${fDate(p.tgl)} — ${p.metode}</span>
+        <span class="fw6" style="color:var(--success)">${fRp(p.jumlah)}</span>
+      </div>`).join('')}
+    </div>`:''}
+  `;
+  document.getElementById('penj-detail-footer').innerHTML=`
+    <button class="btn btn-outline" onclick="showInvoice(${id})">🧾 Invoice</button>
+    <button class="btn btn-amber" onclick="closeModal('m-penj-detail');openAddPayment(${id})">+ Tambah Bayar</button>
+    <button class="btn btn-outline" onclick="closeModal('m-penj-detail');openEditPenjualan(${id})">✏ Edit</button>
+    <button class="btn btn-outline" onclick="closeModal('m-penj-detail')">Tutup</button>
+  `;
+  openModal('m-penj-detail');
+}
+
+// ========== PEMBAYARAN ==========
+function openAddPayment(id){
+  const t=S.penjualan.find(x=>x.id===id); if(!t) return;
+  document.getElementById('ap-trx-id').value=id;
+  document.getElementById('ap-jumlah').value='';
+  document.getElementById('ap-tgl').value=today();
+  document.getElementById('ap-catatan').value='';
+  const sisa=t.total-(t.dibayar||0);
+  document.getElementById('ap-summary').innerHTML=`
+    <div class="sec-title" style="margin:0 0 .5rem">Invoice ${t.invoice}</div>
+    <div class="payment-row"><span class="lbl">Total</span><span class="val coral">${fRp(t.total)}</span></div>
+    <div class="payment-row"><span class="lbl">Sudah Dibayar</span><span class="val green">${fRp(t.dibayar||0)}</span></div>
+    <div class="payment-row total-row"><span class="lbl">Sisa</span><span class="val red">${fRp(sisa)}</span></div>
+  `;
+  openModal('m-add-payment');
+}
+
+function doAddPayment(){
+  const id=parseInt(document.getElementById('ap-trx-id').value);
+  const t=S.penjualan.find(x=>x.id===id); if(!t) return;
+  const jumlah=parseFloat(document.getElementById('ap-jumlah').value)||0;
+  if(jumlah<=0){alert('Masukkan jumlah pembayaran!');return;}
+  if(!t.payments) t.payments=[];
+  t.payments.push({jumlah,tgl:document.getElementById('ap-tgl').value,metode:document.getElementById('ap-metode').value,catatan:document.getElementById('ap-catatan').value});
+  t.dibayar=(t.dibayar||0)+jumlah;
+  save(); closeModal('m-add-payment'); renderPenjualan();
+}
+
+// ========== KONSINYASI ==========
+let konsRowCount = 0;
+
+function addKonsProductRow(produk='', qty='', harga=''){
+  konsRowCount++;
+  const id = konsRowCount;
+  const row = document.createElement('div');
+  row.className = 'product-row';
+  row.id = 'kpr-' + id;
+  row.style.gridTemplateColumns = '2fr 70px 120px 28px';
+  row.innerHTML = `
+    <div class="form-group" style="margin:0">
+      <select id="kpr-prod-${id}" style="width:100%">
+        <option value="">— Pilih —</option>
+        ${getProds().map(p=>`<option${p===produk?' selected':''}>${p}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group" style="margin:0">
+      <input type="number" id="kpr-qty-${id}" value="${qty}" placeholder="0" min="1">
+    </div>
+    <div class="form-group" style="margin:0">
+      <input type="number" id="kpr-hrg-${id}" value="${harga}" placeholder="Rp" min="0">
+    </div>
+    <button type="button" onclick="removeKonsRow(${id})" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:16px;padding:6px 4px;align-self:end">✕</button>
+  `;
+  document.getElementById('kons-product-rows').appendChild(row);
+}
+
+function removeKonsRow(id){
+  const el = document.getElementById('kpr-'+id); if(el) el.remove();
+}
+
+function collectKonsItems(){
+  const items = [];
+  document.querySelectorAll('[id^="kpr-qty-"]').forEach(el => {
+    const id = el.id.replace('kpr-qty-','');
+    const produk = document.getElementById('kpr-prod-'+id)?.value;
+    const qty = parseInt(el.value)||0;
+    const harga = parseFloat(document.getElementById('kpr-hrg-'+id)?.value)||0;
+    if(produk && qty > 0) items.push({produk, qty, harga, terjual:0, retur:0});
+  });
+  return items;
+}
+
+function openAddKons(){
+  document.getElementById('m-kons-title').textContent = 'Kirim Konsinyasi';
+  document.getElementById('ek-id').value = '';
+  document.getElementById('ek-catatan').value = '';
+  document.getElementById('ek-tgl').value = today();
+  document.getElementById('ek-jatuh').value = '';
+  document.getElementById('kons-product-rows').innerHTML = '';
+  konsRowCount = 0;
+  addKonsProductRow();
+  fillBarberSel('ek-barber');
+  openModal('m-kons');
+}
+
+function openEditKons(id){
+  const k = S.konsinyasi.find(x=>x.id===id); if(!k) return;
+  document.getElementById('m-kons-title').textContent = 'Edit Konsinyasi';
+  document.getElementById('ek-id').value = k.id;
+  fillBarberSel('ek-barber');
+  document.getElementById('ek-barber').value = k.barberId;
+  document.getElementById('ek-tgl').value = k.tglKirim;
+  document.getElementById('ek-jatuh').value = k.jatuhTempo||'';
+  document.getElementById('ek-catatan').value = k.catatan||'';
+  document.getElementById('kons-product-rows').innerHTML = '';
+  konsRowCount = 0;
+  const items = k.items || [{produk: k.produk||'', qty: k.qty||0, harga: k.harga||0}];
+  items.forEach(item => addKonsProductRow(item.produk, item.qty, item.harga));
+  openModal('m-kons');
+}
+
+function saveKons(){
+  const barberId = document.getElementById('ek-barber').value;
+  if(!barberId){ alert('Pilih barbershop!'); return; }
+  const newItems = collectKonsItems();
+  if(!newItems.length){ alert('Tambahkan minimal 1 produk!'); return; }
+  const barber = S.barbers.find(b=>b.id==barberId);
+  const editId = document.getElementById('ek-id').value;
+
+  if(editId){
+    const old = S.konsinyasi.find(k=>k.id===parseInt(editId));
+    if(!old) return;
+    // Merge: preserve existing terjual/retur per produk by matching produk name
+    const mergedItems = newItems.map(ni => {
+      const existing = (old.items||[]).find(oi=>oi.produk===ni.produk) || {terjual:0, retur:0};
+      return { ...ni, terjual: existing.terjual||0, retur: existing.retur||0 };
+    });
+    old.barberId = parseInt(barberId);
+    old.barberNama = barber?.nama||'—';
+    old.tglKirim = document.getElementById('ek-tgl').value||today();
+    old.jatuhTempo = document.getElementById('ek-jatuh').value;
+    old.catatan = document.getElementById('ek-catatan').value;
+    old.items = mergedItems;
+    // recompute totals
+    old.qty = mergedItems.reduce((a,i)=>a+i.qty, 0);
+    old.terjual = mergedItems.reduce((a,i)=>a+i.terjual, 0);
+    old.retur = mergedItems.reduce((a,i)=>a+i.retur, 0);
+    old.status = old.terjual+old.retur >= old.qty ? 'Selesai' : 'Aktif';
+  } else {
+    const obj = {
+      id: uid(),
+      barberId: parseInt(barberId), barberNama: barber?.nama||'—',
+      items: newItems,
+      qty: newItems.reduce((a,i)=>a+i.qty, 0),
+      terjual: 0, retur: 0,
+      dibayar: 0, payments: [],
+      tglKirim: document.getElementById('ek-tgl').value||today(),
+      jatuhTempo: document.getElementById('ek-jatuh').value,
+      catatan: document.getElementById('ek-catatan').value,
+      status: 'Aktif',
+    };
+    S.konsinyasi.push(obj);
+  }
+  save(); closeModal('m-kons'); renderKons(); renderTagihan(); updateKStats();
+}
+
+function deleteKons(id){
+  if(!confirm('Hapus data konsinyasi?')) return;
+  S.konsinyasi = S.konsinyasi.filter(k=>k.id!==id);
+  save(); renderKons(); renderTagihan(); updateKStats();
+}
+
+function openKonsUpdate(id){
+  const k = S.konsinyasi.find(x=>x.id===id); if(!k) return;
+  document.getElementById('ku-id').value = id;
+  document.getElementById('ku-bayar').value = '';
+  document.getElementById('ku-tgl-bayar').value = today();
+
+  // Build terjual rows per item
+  const items = k.items || [{produk: k.produk||'', qty: k.qty||0, terjual: k.terjual||0, retur: k.retur||0, harga: k.harga||0}];
+  const nilaiBelumBayar = items.reduce((a,i)=>a+(i.terjual*(i.harga||0)), 0) - (k.dibayar||0);
+  const totalQty = items.reduce((a,i)=>a+i.qty, 0);
+  const totalTerjual = items.reduce((a,i)=>a+i.terjual, 0);
+  const totalRetur = items.reduce((a,i)=>a+i.retur, 0);
+  const totalSisa = totalQty - totalTerjual - totalRetur;
+
+  document.getElementById('ku-info').innerHTML = `
+    <div class="payment-row"><span class="lbl">Barbershop</span><span class="val">${k.barberNama}</span></div>
+    <div class="payment-row"><span class="lbl">Total Dikirim / Terjual / Sisa</span><span class="val">${totalQty} / ${totalTerjual} / ${totalSisa} pcs</span></div>
+    <div class="payment-row"><span class="lbl">Nilai Terjual</span><span class="val coral">${fRp(items.reduce((a,i)=>a+(i.terjual*(i.harga||0)),0))}</span></div>
+    <div class="payment-row"><span class="lbl">Belum Dibayar</span><span class="val red">${fRp(Math.max(0,nilaiBelumBayar))}</span></div>
+  `;
+
+  // Terjual rows
+  document.getElementById('ku-terjual-rows').innerHTML = items.map((item,idx) => {
+    const sisa = item.qty - item.terjual - (item.retur||0);
+    return `<div style="display:grid;grid-template-columns:1fr 80px;gap:8px;align-items:end;margin-bottom:8px">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px">${item.produk}</div>
+        <div style="font-size:11px;color:var(--muted)">Kirim: ${item.qty} · Terjual: ${item.terjual} · Sisa: ${sisa}</div>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Tambah Terjual</label>
+        <input type="number" id="ku-tj-${idx}" placeholder="0" min="0" max="${sisa}">
+      </div>
+    </div>`;
+  }).join('');
+
+  // Retur rows
+  document.getElementById('ku-retur-rows').innerHTML = items.map((item,idx) => {
+    const sisa = item.qty - item.terjual - (item.retur||0);
+    return `<div style="display:grid;grid-template-columns:1fr 80px;gap:8px;align-items:end;margin-bottom:8px">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px">${item.produk}</div>
+        <div style="font-size:11px;color:var(--muted)">Sisa tersedia: ${sisa} pcs</div>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Qty Retur</label>
+        <input type="number" id="ku-rt-${idx}" placeholder="0" min="0" max="${sisa}">
+      </div>
+    </div>`;
+  }).join('');
+
+  openModal('m-kons-update');
+}
+
+let kuActiveTab = 'terjual';
+function switchKUTab(tab, btn){
+  kuActiveTab = tab;
+  document.querySelectorAll('#m-kons-update .tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#m-kons-update .tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('kutab-'+tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+function doKonsUpdate(){
+  const id = parseInt(document.getElementById('ku-id').value);
+  const k = S.konsinyasi.find(x=>x.id===id); if(!k) return;
+  const items = k.items || [{produk: k.produk, qty: k.qty, terjual: k.terjual||0, retur: k.retur||0, harga: k.harga||0}];
+
+  if(kuActiveTab === 'terjual'){
+    let changed = false;
+    items.forEach((item, idx) => {
+      const tambah = parseInt(document.getElementById('ku-tj-'+idx)?.value)||0;
+      if(tambah <= 0) return;
+      const sisa = item.qty - item.terjual - (item.retur||0);
+      if(tambah > sisa){ alert(`Maks terjual untuk ${item.produk}: ${sisa} pcs`); return; }
+      item.terjual += tambah; changed = true;
+    });
+    if(!changed){ closeModal('m-kons-update'); return; }
+  } else if(kuActiveTab === 'bayar'){
+    const jumlah = parseFloat(document.getElementById('ku-bayar').value)||0;
+    if(jumlah <= 0){ alert('Masukkan jumlah!'); return; }
+    if(!k.payments) k.payments = [];
+    k.payments.push({jumlah, tgl: document.getElementById('ku-tgl-bayar').value, metode: document.getElementById('ku-metode').value});
+    k.dibayar = (k.dibayar||0) + jumlah;
+  } else if(kuActiveTab === 'retur'){
+    let changed = false;
+    items.forEach((item, idx) => {
+      const retur = parseInt(document.getElementById('ku-rt-'+idx)?.value)||0;
+      if(retur <= 0) return;
+      const sisa = item.qty - item.terjual - (item.retur||0);
+      if(retur > sisa){ alert(`Maks retur untuk ${item.produk}: ${sisa} pcs`); return; }
+      item.retur = (item.retur||0) + retur; changed = true;
+    });
+    if(!changed){ closeModal('m-kons-update'); return; }
+  }
+
+  k.items = items;
+  k.terjual = items.reduce((a,i)=>a+i.terjual, 0);
+  k.retur = items.reduce((a,i)=>a+(i.retur||0), 0);
+  k.qty = items.reduce((a,i)=>a+i.qty, 0);
+  k.status = k.terjual + k.retur >= k.qty ? 'Selesai' : 'Aktif';
+  save(); closeModal('m-kons-update'); renderKons(); renderTagihan(); updateKStats();
+}
+
+// ========== EDIT NOTA ==========
+function openEditNota(id){
+  const k = S.konsinyasi.find(x=>x.id===id); if(!k) return;
+  document.getElementById('en-kons-id').value = id;
+  document.getElementById('en-nota-no').value = k.notaNo||'';
+  document.getElementById('en-tgl').value = k.tglKirim||today();
+  document.getElementById('en-jatuh').value = k.jatuhTempo||'';
+  document.getElementById('en-catatan').value = k.notaCatatan||k.catatan||'';
+  openModal('m-edit-nota');
+}
+
+function saveEditNota(){
+  const id = parseInt(document.getElementById('en-kons-id').value);
+  const k = S.konsinyasi.find(x=>x.id===id); if(!k) return;
+  k.notaNo = document.getElementById('en-nota-no').value.trim();
+  k.tglKirim = document.getElementById('en-tgl').value||k.tglKirim;
+  k.jatuhTempo = document.getElementById('en-jatuh').value;
+  k.notaCatatan = document.getElementById('en-catatan').value.trim();
+  save();
+  closeModal('m-edit-nota');
+  showNotaKons(id);
+}
+
+// ========== NOTA KONSINYASI ==========
+let currentKonsId = null;
+
+function showNotaKons(id){
+  const k = S.konsinyasi.find(x=>x.id===id); if(!k) return;
+  currentKonsId = id;
+  const c = getCfg();
+  const barber = S.barbers.find(b=>b.id===k.barberId);
+  const items = k.items || [{produk:k.produk||'—', qty:k.qty||0, harga:k.harga||0}];
+  const totalNilai = items.reduce((a,i)=>a+(i.qty*(i.harga||0)), 0);
+  const notaNo = k.notaNo || `KONS-${k.id}`;
+  const hdr = buildInvoiceHeader(c, {invoice: notaNo, tgl: k.tglKirim, dueDate:'', invoiceCv:'', invoiceEmail:'', invoiceHp:'', invoiceBank:'', invoiceRekening:'', invoiceAtasNama:''}, 'NOTA KONSINYASI', false);
+
+  document.getElementById('nota-kons-body').innerHTML = `
+    <div style="border:1.5px solid #D85A30;border-radius:10px;padding:1.5rem;font-family:'DM Sans',sans-serif">
+      ${hdr}
+      <div style="display:inline-block;background:#FAECE7;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;color:#D85A30;text-transform:uppercase;letter-spacing:.8px;margin-bottom:1rem">
+        Surat Jalan Konsinyasi
+      </div>
+      <div style="margin-bottom:1.25rem">
+        <div style="font-weight:700;font-size:15px;color:#1A1A1A">${k.barberNama}</div>
+        ${barber?.kota?`<div style="font-size:12px;color:#888">${barber.kota}</div>`:''}
+        ${barber?.telp?`<div style="font-size:12px;color:#888">📱 ${barber.telp}</div>`:''}
+        ${barber?.alamat?`<div style="font-size:12px;color:#888">${barber.alamat}</div>`:''}
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:1rem">
+        <thead><tr>
+          <th style="background:#1A1A1A;color:#fff;padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase">Produk</th>
+          <th style="background:#1A1A1A;color:#fff;padding:8px 12px;text-align:center;font-size:10px">Qty</th>
+          <th style="background:#1A1A1A;color:#fff;padding:8px 12px;text-align:right;font-size:10px">Harga/pcs</th>
+          <th style="background:#1A1A1A;color:#fff;padding:8px 12px;text-align:right;font-size:10px">Nilai</th>
+        </tr></thead>
+        <tbody>
+          ${items.map(i=>`<tr style="border-bottom:1px solid #FAE8E0">
+            <td style="padding:9px 12px">${i.produk}</td>
+            <td style="padding:9px 12px;text-align:center;font-weight:600">${i.qty}</td>
+            <td style="padding:9px 12px;text-align:right">${fRp(i.harga)}</td>
+            <td style="padding:9px 12px;text-align:right;font-weight:700;color:#D85A30">${fRp(i.qty*(i.harga||0))}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1.25rem">
+        <div style="min-width:240px">
+          <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-top:2px solid #D85A30">
+            <span style="font-weight:700">Total Nilai Titipan</span>
+            <span style="font-weight:700;font-size:16px;color:#D85A30">${fRp(totalNilai)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #eee;font-size:12px">
+        ${(k.notaCatatan||k.catatan)?`
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:6px">Catatan</div>
+        <div style="color:#555;line-height:1.6;font-style:italic">${k.notaCatatan||k.catatan||''}</div>
+        `:''}
+        <div style="margin-top:1rem;font-size:12px;color:#1A1A1A">
+          <span style="font-weight:600">${c.ownerName||'Habib Muhammad'}</span>
+          <span style="color:#888;margin-left:6px;font-size:11px">— Owner, ${c.brand||'BEIVZ'}</span>
+        </div>
+      </div>
+
+      ${buildPaymentFooter(c, {invoice:notaNo, invoiceBank:c.bank, invoiceRekening:c.rekening, invoiceAtasNama:c.atasnama})}
+    </div>
+  `;
+  openModal('m-nota-kons');
+}
+
+function printNotaKons(){
+  const k = S.konsinyasi.find(x=>x.id===currentKonsId); if(!k) return;
+  const c = getCfg();
+  const barber = S.barbers.find(b=>b.id===k.barberId);
+  const items = k.items || [{produk:k.produk||'—', qty:k.qty||0, harga:k.harga||0}];
+  const totalNilai = items.reduce((a,i)=>a+(i.qty*(i.harga||0)), 0);
+  const notaNo = k.notaNo || `KONS-${k.id}`;
+  const cv = c.cv; const email = c.email; const hp = c.hp;
+  const bank = c.bank; const rek = c.rekening; const an = c.atasnama;
+  const logoHtml = c.logo ? `<img src="${c.logo}" style="max-height:60px;max-width:160px;object-fit:contain" alt="logo">`
+    : `<div class="inv-logo">${c.brand||'BEIVZ'}</div>`;
+
+  document.getElementById('print-zone').innerHTML = `
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0;}
+      body{font-family:'DM Sans',sans-serif;padding:2rem;color:#1A1A1A;font-size:13px;}
+      .inv-logo{font-family:serif;font-size:24px;font-weight:700;color:#D85A30;}
+      .hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:1rem;border-bottom:3px solid #D85A30;margin-bottom:1rem;}
+      .contact-line{font-size:11px;color:#888;margin-top:2px;}
+      .tag{display:inline-block;background:#FAECE7;border-radius:4px;padding:3px 10px;font-size:10px;font-weight:700;color:#D85A30;text-transform:uppercase;letter-spacing:.8px;margin-bottom:.75rem;}
+      table{width:100%;border-collapse:collapse;margin-bottom:1rem;}
+      thead th{background:#1A1A1A;color:#fff;padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;}
+      tbody td{padding:7px 10px;border-bottom:1px solid #f0f0f0;}
+      .total-bar{display:flex;justify-content:flex-end;margin-bottom:1rem;}
+      .total-inner{min-width:220px;border-top:2px solid #D85A30;padding-top:6px;display:flex;justify-content:space-between;font-weight:700;}
+      .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;padding-top:1rem;border-top:1px solid #ddd;font-size:11px;}
+      .ttd-box{height:50px;border-bottom:1px solid #888;width:110px;margin-bottom:4px;}
+      .bank-section{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;padding-top:1rem;border-top:1px solid #ddd;}
+      .bank-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+      .bank-row{display:flex;gap:8px;font-size:11px;padding:2px 0;}
+      .bank-key{color:#888;min-width:120px;}
+      footer{margin-top:1.5rem;font-size:9px;color:#bbb;border-top:1px solid #eee;padding-top:6px;text-align:center;}
+    </style>
+    <div class="hdr">
+      <div>
+        ${logoHtml}
+        ${cv?`<div style="font-size:11px;font-weight:600;margin-top:4px">${cv}</div>`:''}
+        ${c.tagline?`<div class="contact-line">${c.tagline}</div>`:''}
+        ${c.alamat?`<div class="contact-line">${c.alamat}</div>`:''}
+        ${email?`<div class="contact-line">📧 ${email}</div>`:''}
+        ${hp?`<div class="contact-line">📱 ${hp}</div>`:''}
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:18px;font-weight:700;letter-spacing:2px">NOTA KONSINYASI</div>
+        <div style="font-family:monospace;font-size:12px;color:#D85A30;margin-top:2px">${notaNo}</div>
+        <div class="contact-line">Tgl Kirim: ${fDate(k.tglKirim)}</div>
+        ${k.jatuhTempo?`<div style="font-size:11px;color:#A32D2D;font-weight:600">Jatuh Tempo: ${fDate(k.jatuhTempo)}</div>`:''}
+      </div>
+    </div>
+    <div class="tag">Surat Jalan Konsinyasi</div>
+    <div style="margin-bottom:1rem">
+      <div style="font-weight:700;font-size:13px">${k.barberNama}</div>
+      ${barber?.kota?`<div class="contact-line">${barber.kota}</div>`:''}
+      ${barber?.telp?`<div class="contact-line">📱 ${barber.telp}</div>`:''}
+    </div>
+    <table>
+      <thead><tr><th>Produk</th><th style="text-align:center">Qty</th><th style="text-align:right">Harga/pcs</th><th style="text-align:right">Nilai</th></tr></thead>
+      <tbody>${items.map(i=>`<tr>
+        <td>${i.produk}</td>
+        <td style="text-align:center;font-weight:600">${i.qty}</td>
+        <td style="text-align:right">${fRp(i.harga)}</td>
+        <td style="text-align:right;font-weight:700;color:#D85A30">${fRp(i.qty*(i.harga||0))}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+    <div class="total-bar"><div class="total-inner">
+      <span>Total Nilai Titipan</span><span style="color:#D85A30">${fRp(totalNilai)}</span>
+    </div></div>
+    <div class="bottom-grid" style="display:block;margin-top:1rem;padding-top:1rem;border-top:1px solid #ddd">
+      ${(k.notaCatatan||k.catatan)?`
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:5px">Catatan</div>
+      <div style="color:#555;line-height:1.7;font-size:11px;font-style:italic">${k.notaCatatan||k.catatan||''}</div>`:''}
+      <div style="margin-top:${(k.notaCatatan||k.catatan)?'1rem':'0'};font-size:12px;color:#1A1A1A">
+        <span style="font-weight:600">${c.ownerName||'Habib Muhammad'}</span>
+        <span style="color:#888;margin-left:6px;font-size:11px">— Owner, ${c.brand||'BEIVZ'}</span>
+      </div>
+    </div>
+    ${(bank||rek)?`<div class="bank-section">
+      <div>
+        <div class="bank-label">Payment Detail</div>
+        ${bank?`<div class="bank-row"><span class="bank-key">Bank Name</span><span style="font-weight:600">: ${bank}</span></div>`:''}
+        ${an?`<div class="bank-row"><span class="bank-key">Account Name</span><span style="font-weight:600">: ${an}</span></div>`:''}
+        ${rek?`<div class="bank-row"><span class="bank-key">Account Number</span><span style="font-weight:600">: ${rek}</span></div>`:''}
+        <div class="bank-row"><span class="bank-key">Payment Reference</span><span style="font-weight:600">: ${notaNo}</span></div>
+      </div>
+      <div>
+        <div class="bank-label">Other Information</div>
+        <div class="bank-row"><span class="bank-key">Customer Reference</span><span>:</span></div>
+      </div>
+    </div>`:''}
+    <footer>Nota Konsinyasi #${notaNo} · ${cv||'BEIVZ'} · Dicetak ${new Date().toLocaleString('id-ID')} · Page 1 of 1</footer>
+  `;
+  window.print();
+}
+
+function exportNotaKonsPDF(){
+  const k = S.konsinyasi.find(x=>x.id===currentKonsId); if(!k) return;
+  const c = getCfg();
+  const barber = S.barbers.find(b=>b.id===k.barberId);
+  const items = k.items || [{produk:k.produk||'—', qty:k.qty||0, harga:k.harga||0}];
+  const totalNilai = items.reduce((a,i)=>a+(i.qty*(i.harga||0)), 0);
+  const notaNo = k.notaNo || `KONS-${k.id}`;
+  const cv = c.cv; const email = c.email; const hp = c.hp;
+  const bank = c.bank; const rek = c.rekening; const an = c.atasnama;
+
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({unit:'mm', format:'a4'});
+  const W = 210; let y = 0;
+
+  // Header bar
+  doc.setFillColor(26,26,26); doc.rect(0,0,W,30,'F');
+  doc.setFillColor(216,90,48); doc.rect(0,30,W,3,'F');
+
+  if(c.logo){
+    try{ doc.addImage(c.logo,'PNG',10,4,45,20,'','FAST'); }
+    catch(e){
+      doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold');
+      doc.text(c.brand||'BEIVZ',10,18);
+    }
+  } else {
+    doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold');
+    doc.text(c.brand||'BEIVZ',10,18);
+  }
+  doc.setTextColor(200,200,200); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  if(cv) doc.text(cv,10,25);
+  doc.setTextColor(255,255,255); doc.setFontSize(14); doc.setFont('helvetica','bold');
+  doc.text('NOTA KONSINYASI',W-12,13,{align:'right'});
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(216,90,48);
+  doc.text(notaNo,W-12,20,{align:'right'});
+  doc.setTextColor(200,200,200); doc.setFontSize(8);
+  doc.text(`Tgl: ${fDate(k.tglKirim)}`,W-12,26,{align:'right'});
+  y = 38;
+
+  // Info block
+  doc.setFillColor(250,236,231); doc.rect(10,y,W-20,7,'F');
+  doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(216,90,48);
+  doc.text('SURAT JALAN KONSINYASI',W/2,y+4.5,{align:'center'});
+  y += 11;
+
+  // Barber info
+  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30);
+  doc.text(k.barberNama,12,y); y+=6;
+  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(100,100,100);
+  if(barber?.kota){doc.text(barber.kota,12,y); y+=4;}
+  if(barber?.telp){doc.text(barber.telp,12,y); y+=4;}
+  if(k.jatuhTempo){doc.setTextColor(163,45,45); doc.text(`Jatuh Tempo: ${fDate(k.jatuhTempo)}`,12,y); y+=4;}
+  y+=4;
+
+  doc.autoTable({
+    startY: y, margin:{left:10,right:10},
+    head:[['Produk','Qty','Harga/pcs','Nilai']],
+    body: items.map(i=>[i.produk, i.qty, fRp(i.harga), fRp(i.qty*(i.harga||0))]),
+    headStyles:{fillColor:[26,26,26], fontSize:9},
+    styles:{fontSize:9},
+    columnStyles:{1:{halign:'center',cellWidth:18},2:{halign:'right',cellWidth:36},3:{halign:'right',cellWidth:36,fontStyle:'bold',textColor:[216,90,48]}}
+  });
+  y = doc.lastAutoTable.finalY + 5;
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(30,30,30);
+  doc.text('Total Nilai Titipan',W-50,y+5);
+  doc.setTextColor(216,90,48); doc.text(fRp(totalNilai),W-10,y+5,{align:'right'});
+  y += 14;
+
+  // Bottom: catatan + owner
+  doc.setDrawColor(220,220,220); doc.line(10,y,W-10,y); y+=6;
+  const catatan = k.notaCatatan||k.catatan||'';
+  if(catatan){
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(120,120,120);
+    doc.text('CATATAN',12,y); y+=5;
+    doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(80,80,80);
+    const cLines = doc.splitTextToSize(catatan, W-24);
+    doc.text(cLines,12,y); y += cLines.length*4+4;
+  }
+  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30);
+  doc.text(c.ownerName||'Habib Muhammad',12,y+4);
+  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(120,120,120);
+  doc.text(`Owner, ${c.brand||'BEIVZ'}`,12,y+9);
+  y += 18;
+
+  // Bank detail
+  if(bank||rek){
+    doc.setDrawColor(210,210,210); doc.line(10,y,W-10,y); y+=6;
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30);
+    doc.text('Payment Detail',10,y);
+    doc.text('Other Information',W/2+5,y);
+    y+=5;
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+    const rows=[[bank?`Bank: ${bank}`:'',''],[an?`A.n: ${an}`:'',''],[rek?`No. Rek: ${rek}`:'',' '],[`Ref: ${notaNo}`,'Customer Reference :']];
+    rows.forEach(([l,r])=>{
+      doc.setTextColor(60,60,60); if(l) doc.text(l,10,y);
+      doc.setTextColor(120,120,120); if(r) doc.text(r,W/2+5,y);
+      y+=4.5;
+    });
+  }
+
+  doc.setFontSize(7); doc.setTextColor(150,150,150);
+  doc.text(`Nota Konsinyasi #${notaNo} · ${cv||'BEIVZ'} · Page 1 of 1`,W/2,288,{align:'center'});
+
+  doc.save(`Nota_Konsinyasi_${notaNo}.pdf`);
+}
+
+function updateKStats(){
+  const aktif = S.konsinyasi.filter(k=>k.status==='Aktif').length;
+  const kirim = S.konsinyasi.reduce((a,k)=>a+k.qty, 0);
+  // Total nilai semua barang dikirim (qty × harga per item)
+  const totalNilai = S.konsinyasi.reduce((a,k)=>{
+    const items = k.items||[{qty:k.qty||0, harga:k.harga||0}];
+    return a + items.reduce((s,i)=>s+(i.qty*(i.harga||0)), 0);
+  }, 0);
+  const hutang = S.konsinyasi.reduce((a,k)=>{
+    const items = k.items||[{terjual:k.terjual||0, harga:k.harga||0}];
+    const nilaiTerjual = items.reduce((s,i)=>s+(i.terjual*(i.harga||0)), 0);
+    return a + (nilaiTerjual - (k.dibayar||0));
+  }, 0);
+  document.getElementById('sk-aktif').textContent = aktif;
+  document.getElementById('sk-kirim').textContent = kirim;
+  document.getElementById('sk-nilai').textContent = fRp(totalNilai);
+  document.getElementById('sk-hutang').textContent = fRp(Math.max(0, hutang));
+}
+
+function switchKTab(tab, btn){
+  document.querySelectorAll('#page-konsinyasi .tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#page-konsinyasi .tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('ktab-'+tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+function renderKons(){
+  updateKStats();
+  const tb = document.getElementById('tb-kons');
+  if(!S.konsinyasi.length){
+    tb.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📦</div><p>Belum ada konsinyasi.</p></div></td></tr>`;
+    return;
+  }
+  tb.innerHTML = S.konsinyasi.map(k => {
+    const items = k.items || [{produk:k.produk||'—', qty:k.qty||0, terjual:k.terjual||0, retur:k.retur||0, harga:k.harga||0}];
+    const totalQty = items.reduce((a,i)=>a+i.qty, 0);
+    const totalTerjual = items.reduce((a,i)=>a+i.terjual, 0);
+    const totalRetur = items.reduce((a,i)=>a+(i.retur||0), 0);
+    const totalSisa = totalQty - totalTerjual - totalRetur;
+    const nilaiKirim = items.reduce((a,i)=>a+(i.qty*(i.harga||0)), 0);
+    const itemSummary = items.map(i=>`${i.produk.replace(' Pomade','').replace('Hair ','')}`).join(', ');
+    return `<tr>
+      <td><strong>${k.barberNama}</strong></td>
+      <td class="text-sm text-muted">${items.length} produk<br><span style="font-size:10px">${itemSummary}</span></td>
+      <td class="text-right">${totalQty}</td>
+      <td class="text-right">${totalTerjual}</td>
+      <td class="text-right ${totalSisa>0?'text-coral':''}">${totalSisa}</td>
+      <td class="text-coral text-sm">${fRp(nilaiKirim)}</td>
+      <td>${fDate(k.tglKirim)}</td>
+      <td><span class="badge ${k.status==='Aktif'?'badge-konsinyasi':'badge-lunas'}">${k.status}</span></td>
+      <td><div class="btn-group">
+        <button class="btn btn-outline btn-xs" onclick="showNotaKons(${k.id})">🧾 Nota</button>
+        <button class="btn btn-outline btn-xs" onclick="openEditNota(${k.id})">✏ Edit Nota</button>
+        <button class="btn btn-outline btn-xs" onclick="openKonsUpdate(${k.id})">Update</button>
+        <button class="btn btn-outline btn-xs" onclick="openEditKons(${k.id})">Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteKons(${k.id})">Hapus</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderTagihan(){
+  const tb = document.getElementById('tb-tagihan');
+  const data = S.konsinyasi.filter(k=>k.terjual>0);
+  if(!data.length){
+    tb.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">🧾</div><p>Belum ada tagihan.</p></div></td></tr>`;
+    return;
+  }
+  tb.innerHTML = data.map(k => {
+    const items = k.items || [{produk:k.produk||'—', terjual:k.terjual||0, harga:k.harga||0}];
+    const nilai = items.reduce((a,i)=>a+(i.terjual*(i.harga||0)), 0);
+    const sisa = nilai - (k.dibayar||0);
+    const status = sisa<=0 ? 'lunas' : ((k.dibayar||0)>0 ? 'sebagian' : 'belum');
+    const badge = status==='lunas'?'badge-lunas':status==='sebagian'?'badge-sebagian':'badge-belum';
+    const label = status==='lunas'?'Lunas':status==='sebagian'?'Dibayar Sebagian':'Belum Dibayar';
+    const itemSummary = items.map(i=>`${i.produk.replace(' Pomade','').replace('Hair ','')} ×${i.terjual}`).join(', ');
+    return `<tr>
+      <td><strong>${k.barberNama}</strong></td>
+      <td class="text-sm text-muted">${itemSummary}</td>
+      <td class="text-right">${k.terjual} pcs</td>
+      <td class="text-coral">${fRp(nilai)}</td>
+      <td style="color:var(--success)">${fRp(k.dibayar||0)}</td>
+      <td style="color:var(--danger)">${fRp(Math.max(0,sisa))}</td>
+      <td>${k.jatuhTempo?fDate(k.jatuhTempo):'—'}</td>
+      <td><span class="badge ${badge}">${label}</span></td>
+      <td><button class="btn btn-amber btn-xs" onclick="openKonsUpdate(${k.id})">+ Bayar</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ========== DATA RECOVERY ==========
+function tryRecoverData(){
+  const candidates = [
+    'beivz-barber-roots-v1',
+    'beivz-barber-roots',
+    'bbr-v1',
+    'bbr-v2',
+    'beivz-state-v4', // stock opname app key, just in case
+  ];
+  let best = null;
+  let bestKey = '';
+  for(const key of candidates){
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) continue;
+      const parsed = JSON.parse(raw);
+      // Check if it has penjualan data
+      if(parsed.penjualan && parsed.penjualan.length > 0){
+        if(!best || parsed.penjualan.length > best.penjualan.length){
+          best = parsed; bestKey = key;
+        }
+      }
+    }catch(e){}
+  }
+  if(best && bestKey !== 'bbr-v2'){
+    if(confirm(`Ditemukan ${best.penjualan.length} transaksi dari key "${bestKey}". Pulihkan sekarang?`)){
+      S = best;
+      if(!S.customProds || !S.customProds.length) S.customProds = [...PRODS_DEFAULT];
+      save();
+      document.getElementById('recovery-banner').style.display='none';
+      fillRwFilters(); renderRiwayat();
+      renderBarber(); renderPenjualan();
+      alert('✓ Data berhasil dipulihkan!');
+    }
+  } else if(best && bestKey === 'bbr-v2'){
+    alert('Data sudah up-to-date. Jika masih kosong, data mungkin memang belum diinput di browser ini.');
+  } else {
+    // Scan all keys
+    const allKeys = [];
+    for(let i=0; i<localStorage.length; i++) allKeys.push(localStorage.key(i));
+    const appKeys = allKeys.filter(k=>k.includes('beivz')||k.includes('bbr')||k.includes('barber'));
+    if(appKeys.length){
+      alert(`Tidak ada data penjualan ditemukan.\nKey tersimpan: ${appKeys.join(', ')}\n\nData mungkin tersimpan di browser/tab berbeda, atau belum pernah diinput.`);
+    } else {
+      alert('Tidak ada data tersimpan di browser ini. Pastikan kamu menggunakan browser & tab yang sama saat menginput data sebelumnya.');
+    }
+  }
+}
+
+// ========== RIWAYAT ==========
+function fillRwFilters(){
+  const sel=document.getElementById('rw-barber');
+  sel.innerHTML='<option value="">Semua</option>'+S.barbers.map(b=>`<option value="${b.id}">${b.nama}</option>`).join('');
+  // Show recovery banner if penjualan empty
+  const banner = document.getElementById('recovery-banner');
+  if(banner) banner.style.display = S.penjualan.length === 0 ? 'block' : 'none';
+}
+
+function renderRiwayat(){
+  const dari=document.getElementById('rw-dari').value;
+  const sampai=document.getElementById('rw-sampai').value;
+  const barberId=document.getElementById('rw-barber').value;
+  const status=document.getElementById('rw-status').value;
+  let data=[...S.penjualan].sort((a,b)=>b.tgl.localeCompare(a.tgl));
+  if(dari) data=data.filter(p=>p.tgl>=dari);
+  if(sampai) data=data.filter(p=>p.tgl<=sampai);
+  if(barberId) data=data.filter(p=>p.barberId==barberId);
+  if(status) data=data.filter(p=>payStatus(p)===status);
+  const total=data.reduce((a,p)=>a+p.total,0);
+  const bayar=data.reduce((a,p)=>a+(p.dibayar||0),0);
+  document.getElementById('rw-count').textContent=data.length;
+  document.getElementById('rw-total').textContent=fRp(total);
+  document.getElementById('rw-bayar').textContent=fRp(bayar);
+  const tb=document.getElementById('tb-riwayat');
+  if(!data.length){tb.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📋</div><p>Tidak ada riwayat.</p></div></td></tr>`;return;}
+  tb.innerHTML=data.map(p=>{
+    const itemSummary=(p.items||[]).map(i=>`${i.produk.replace(' Pomade','').replace('Hair ','')}`).join(', ');
+    const sisa=p.total-(p.dibayar||0);
+    return `<tr>
+      <td class="mono">${p.invoice}</td>
+      <td>${fDate(p.tgl)}</td>
+      <td><strong>${p.barberNama}</strong></td>
+      <td class="text-sm text-muted">${itemSummary}</td>
+      <td class="text-coral">${fRp(p.total)}</td>
+      <td style="color:var(--success)">${fRp(p.dibayar||0)}</td>
+      <td style="color:var(--danger)">${fRp(sisa)}</td>
+      <td>${payBadge(p)}</td>
+      <td><div class="btn-group">
+        <button class="btn btn-outline btn-xs" onclick="showPenjualanDetail(${p.id})">Detail</button>
+        <button class="btn btn-outline btn-xs" onclick="showInvoice(${p.id})">Invoice</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ========== SETTINGS ==========
+const CFG_DEFAULT = {
+  cv:'CV. Beivz Indonesia', brand:'BEIVZ', tagline:'Barber Roots · beivz.id',
+  alamat:'', email:'hello@beivz.id', hp:'', web:'beivz.id',
+  bank:'', rekening:'', atasnama:'',
+  ownerName:'Habib Muhammad',
+  terms:14, notes:'Mohon transfer ke rekening di atas sebelum jatuh tempo.\nTerima kasih atas kepercayaan Anda.',
+  logo:''
+};
+
+function getCfg(){ return Object.assign({}, CFG_DEFAULT, S.settings||{}); }
+
+function loadSettings(){
+  const c=getCfg();
+  document.getElementById('cfg-owner').value=c.ownerName||'Habib Muhammad';
+  document.getElementById('cfg-cv').value=c.cv||'';
+  document.getElementById('cfg-brand').value=c.brand||'';
+  document.getElementById('cfg-tagline').value=c.tagline||'';
+  document.getElementById('cfg-alamat').value=c.alamat||'';
+  document.getElementById('cfg-email').value=c.email||'';
+  document.getElementById('cfg-hp').value=c.hp||'';
+  document.getElementById('cfg-web').value=c.web||'';
+  document.getElementById('cfg-bank').value=c.bank||'';
+  document.getElementById('cfg-rekening').value=c.rekening||'';
+  document.getElementById('cfg-atasnama').value=c.atasnama||'';
+  document.getElementById('cfg-terms').value=c.terms||14;
+  document.getElementById('cfg-notes').value=c.notes||'';
+  if(c.logo){
+    document.getElementById('logo-preview-img').src=c.logo;
+    document.getElementById('logo-preview-img').style.display='block';
+    document.getElementById('logo-placeholder').style.display='none';
+  }
+  refreshSettingsPreview();
+}
+
+function saveSettings(){
+  S.settings={
+    ownerName:document.getElementById('cfg-owner').value.trim()||'Habib Muhammad',
+    cv:document.getElementById('cfg-cv').value.trim(),
+    brand:document.getElementById('cfg-brand').value.trim(),
+    tagline:document.getElementById('cfg-tagline').value.trim(),
+    alamat:document.getElementById('cfg-alamat').value.trim(),
+    email:document.getElementById('cfg-email').value.trim(),
+    hp:document.getElementById('cfg-hp').value.trim(),
+    web:document.getElementById('cfg-web').value.trim(),
+    bank:document.getElementById('cfg-bank').value.trim(),
+    rekening:document.getElementById('cfg-rekening').value.trim(),
+    atasnama:document.getElementById('cfg-atasnama').value.trim(),
+    terms:parseInt(document.getElementById('cfg-terms').value)||14,
+    notes:document.getElementById('cfg-notes').value.trim(),
+    logo:S.settings?.logo||'',
+  };
+  save();
+  refreshSettingsPreview();
+  alert('Pengaturan invoice berhasil disimpan!');
+}
+
+function handleLogoUpload(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const data=e.target.result;
+    if(!S.settings) S.settings={};
+    S.settings.logo=data; save();
+    document.getElementById('logo-preview-img').src=data;
+    document.getElementById('logo-preview-img').style.display='block';
+    document.getElementById('logo-placeholder').style.display='none';
+    refreshSettingsPreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearLogo(){
+  if(!confirm('Hapus logo?')) return;
+  if(!S.settings) S.settings={};
+  S.settings.logo=''; save();
+  document.getElementById('logo-preview-img').src='';
+  document.getElementById('logo-preview-img').style.display='none';
+  document.getElementById('logo-placeholder').style.display='block';
+  refreshSettingsPreview();
+}
+
+function refreshSettingsPreview(){
+  const c=getCfg();
+  const el=document.getElementById('settings-preview'); if(!el) return;
+  const mockT={invoice:'INV-PREVIEW',tgl:today(),dueDate:'',invoiceCv:'',invoiceEmail:'',invoiceHp:'',invoiceBank:'',invoiceRekening:'',invoiceAtasNama:''};
+  el.innerHTML = buildInvoiceHeader(c, mockT) + buildPaymentFooter(c, {...mockT, invoiceBank:c.bank, invoiceRekening:c.rekening, invoiceAtasNama:c.atasnama});
+}
+
+// Build reusable invoice header HTML (no bank here — bank goes to footer)
+function buildInvoiceHeader(c, t, docType='INVOICE', showDue=true){
+  const cv=t.invoiceCv||c.cv;
+  const email=t.invoiceEmail||c.email;
+  const hp=t.invoiceHp||c.hp;
+  const dueDate=showDue?(t.dueDate||(t.tgl?(()=>{const d=new Date(t.tgl+'T12:00:00');d.setDate(d.getDate()+(c.terms||14));return d.toISOString().split('T')[0];})():'')):'';
+
+  const logoHtml=c.logo?`<img src="${c.logo}" style="max-height:64px;max-width:180px;object-fit:contain;display:block" alt="logo">`
+    :`<div style="font-family:serif;font-size:26px;font-weight:700;color:#D85A30">${c.brand||'BEIVZ'}</div>`;
+
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding-bottom:1rem;border-bottom:2px solid #D85A30;margin-bottom:1rem">
+      <div>
+        ${logoHtml}
+        ${cv?`<div style="font-size:12px;font-weight:600;color:#1A1A1A;margin-top:6px">${cv}</div>`:''}
+        ${c.tagline?`<div style="font-size:11px;color:#888;margin-top:1px">${c.tagline}</div>`:''}
+        ${c.alamat?`<div style="font-size:11px;color:#888;margin-top:2px;max-width:220px;line-height:1.4">${c.alamat}</div>`:''}
+        <div style="margin-top:5px;display:flex;flex-direction:column;gap:1px">
+          ${email?`<div style="font-size:11px;color:#888">📧 ${email}</div>`:''}
+          ${hp?`<div style="font-size:11px;color:#888">📱 ${hp}</div>`:''}
+          ${c.web?`<div style="font-size:11px;color:#888">🌐 ${c.web}</div>`:''}
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:22px;font-weight:700;color:#1A1A1A;letter-spacing:2px">${docType}</div>
+        <div style="font-family:monospace;font-size:14px;color:#D85A30;margin-top:2px">${t.invoice}</div>
+        <div style="font-size:11px;color:#888;margin-top:4px">Tanggal: ${fDate(t.tgl)}</div>
+        ${dueDate?`<div style="font-size:11px;color:#A32D2D;margin-top:1px;font-weight:600">Due: ${fDate(dueDate)}</div>`:''}
+      </div>
+    </div>
+  `;
+}
+
+// Build payment detail footer block
+function buildPaymentFooter(c, t){
+  const bank=t.invoiceBank||c.bank;
+  const rek=t.invoiceRekening||c.rekening;
+  const an=t.invoiceAtasNama||c.atasnama;
+  if(!bank && !rek) return '';
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #eee">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#1A1A1A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Payment Detail</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          ${bank?`<tr><td style="color:#888;padding:2px 0;width:110px">Bank Name</td><td style="font-weight:600">: ${bank}</td></tr>`:''}
+          ${an?`<tr><td style="color:#888;padding:2px 0">Account Name</td><td style="font-weight:600">: ${an}</td></tr>`:''}
+          ${rek?`<tr><td style="color:#888;padding:2px 0">Account Number</td><td style="font-weight:600">: ${rek}</td></tr>`:''}
+          <tr><td style="color:#888;padding:2px 0">Payment Ref.</td><td style="font-weight:600">: ${t.invoice}</td></tr>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#1A1A1A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Other Information</div>
+        <div style="font-size:12px;color:#888">Customer Reference :</div>
+      </div>
+    </div>
+  `;
+}
+
+// ========== INVOICE EDIT ==========
+function openInvoiceEdit(){
+  const t=S.penjualan.find(x=>x.id===currentTrxId); if(!t) return;
+  const c=getCfg();
+  document.getElementById('ie-trx-id').value=t.id;
+  document.getElementById('ie-invoice').value=t.invoice;
+  document.getElementById('ie-tgl').value=t.tgl||today();
+  document.getElementById('ie-tipe').value=t.tipe||'Beli Putus';
+  // due date: saved or computed
+  const savedDue=t.dueDate||'';
+  document.getElementById('ie-due').value=savedDue;
+  // per-invoice overrides
+  document.getElementById('ie-cv').value=t.invoiceCv||'';
+  document.getElementById('ie-email').value=t.invoiceEmail||'';
+  document.getElementById('ie-hp').value=t.invoiceHp||'';
+  document.getElementById('ie-bank').value=t.invoiceBank||'';
+  document.getElementById('ie-rekening').value=t.invoiceRekening||'';
+  document.getElementById('ie-atasnama').value=t.invoiceAtasNama||'';
+  document.getElementById('ie-catatan').value=t.catatan||'';
+  openModal('m-invoice-edit');
+}
+
+function saveInvoiceEdit(){
+  const id=parseInt(document.getElementById('ie-trx-id').value);
+  const t=S.penjualan.find(x=>x.id===id); if(!t) return;
+  t.invoice=document.getElementById('ie-invoice').value.trim()||t.invoice;
+  t.tgl=document.getElementById('ie-tgl').value||t.tgl;
+  t.tipe=document.getElementById('ie-tipe').value;
+  t.dueDate=document.getElementById('ie-due').value;
+  t.invoiceCv=document.getElementById('ie-cv').value.trim();
+  t.invoiceEmail=document.getElementById('ie-email').value.trim();
+  t.invoiceHp=document.getElementById('ie-hp').value.trim();
+  t.invoiceBank=document.getElementById('ie-bank').value.trim();
+  t.invoiceRekening=document.getElementById('ie-rekening').value.trim();
+  t.invoiceAtasNama=document.getElementById('ie-atasnama').value.trim();
+  t.catatan=document.getElementById('ie-catatan').value.trim();
+  save();
+  closeModal('m-invoice-edit');
+  showInvoice(id);
+}
+
+// ========== INVOICE DISPLAY ==========
+function showInvoice(id){
+  const t=S.penjualan.find(x=>x.id===id); if(!t) return;
+  currentTrxId=id;
+  const barber=S.barbers.find(b=>b.id===t.barberId);
+  const c=getCfg();
+  const sisa=Math.max(0,t.total-(t.dibayar||0));
+  const hdr=buildInvoiceHeader(c,t);
+  const notes=t.catatan||(c.notes?c.notes.replace(/\n/g,'<br>'):'');
+
+  document.getElementById('invoice-body').innerHTML=`
+    <div style="border:1.5px solid #D85A30;border-radius:10px;padding:1.5rem;font-family:'DM Sans',sans-serif">
+      ${hdr}
+      <div style="margin-bottom:1.25rem">
+        <div style="font-weight:700;font-size:15px;color:#1A1A1A">${t.barberNama}</div>
+        ${barber?.kota?`<div style="font-size:12px;color:#888">${barber.kota}</div>`:''}
+        ${barber?.telp?`<div style="font-size:12px;color:#888">📱 ${barber.telp}</div>`:''}
+        ${barber?.alamat?`<div style="font-size:12px;color:#888">${barber.alamat}</div>`:''}
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:1rem">
+        <thead><tr>
+          <th style="background:#1A1A1A;color:#fff;padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase">Produk</th>
+          <th style="background:#1A1A1A;color:#fff;padding:8px 12px;text-align:center;font-size:10px">Qty</th>
+          <th style="background:#1A1A1A;color:#fff;padding:8px 12px;text-align:right;font-size:10px">Harga</th>
+          <th style="background:#1A1A1A;color:#fff;padding:8px 12px;text-align:right;font-size:10px">Subtotal</th>
+        </tr></thead>
+        <tbody>
+          ${(t.items||[]).map(i=>`<tr style="border-bottom:1px solid #FAE8E0">
+            <td style="padding:9px 12px">${i.produk}</td>
+            <td style="padding:9px 12px;text-align:center">${i.qty}</td>
+            <td style="padding:9px 12px;text-align:right">${fRp(i.harga)}</td>
+            <td style="padding:9px 12px;text-align:right;font-weight:700;color:#D85A30">${fRp(i.subtotal)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+        <div style="min-width:240px">
+          <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid #eee">
+            <span style="color:#888">Total Invoice</span>
+            <span style="font-weight:700;font-size:16px;color:#D85A30">${fRp(t.total)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px">
+            <span style="color:#888">Sudah Dibayar</span>
+            <span style="font-weight:600;color:#3B6D11">${fRp(t.dibayar||0)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0 0;font-size:13px;border-top:2px solid #D85A30;margin-top:4px">
+            <span style="font-weight:700">Sisa Tagihan</span>
+            <span style="font-weight:700;color:${sisa>0?'#A32D2D':'#3B6D11'}">${fRp(sisa)}</span>
+          </div>
+        </div>
+      </div>
+
+      ${(t.payments&&t.payments.length)?`
+      <div style="margin-bottom:1rem;font-size:11px">
+        <div style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:5px">Riwayat Pembayaran</div>
+        ${t.payments.map((p,i)=>`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f5f5f5">
+          <span style="color:#888">${i+1}. ${fDate(p.tgl)} · ${p.metode}${p.catatan?' · '+p.catatan:''}</span>
+          <span style="font-weight:600;color:#3B6D11">${fRp(p.jumlah)}</span>
+        </div>`).join('')}
+      </div>`:''}
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.75rem">
+        ${notes?`<div style="font-size:11px;color:#888;max-width:380px;line-height:1.5;font-style:italic">${notes}</div>`:'<div></div>'}
+        ${payBadge(t)}
+      </div>
+      ${buildPaymentFooter(c,t)}
+    </div>
+  `;
+  openModal('m-invoice');
+}
+
+function printInvoice(){
+  const t=S.penjualan.find(x=>x.id===currentTrxId); if(!t) return;
+  const barber=S.barbers.find(b=>b.id===t.barberId);
+  const c=getCfg();
+  const sisa=Math.max(0,t.total-(t.dibayar||0));
+  const cv=t.invoiceCv||c.cv;
+  const email=t.invoiceEmail||c.email;
+  const hp=t.invoiceHp||c.hp;
+  const bank=t.invoiceBank||c.bank;
+  const rek=t.invoiceRekening||c.rekening;
+  const an=t.invoiceAtasNama||c.atasnama;
+  const dueDate=t.dueDate||(t.tgl?(()=>{const d=new Date(t.tgl+'T12:00:00');d.setDate(d.getDate()+(c.terms||14));return d.toISOString().split('T')[0];})():'');
+  const notes=(t.catatan||c.notes||'').replace(/\n/g,'<br>');
+  const logoHtml=c.logo?`<img src="${c.logo}" style="max-height:70px;max-width:200px;object-fit:contain" alt="logo">`
+    :`<div class="inv-logo">${c.brand||'BEIVZ'}</div>`;
+
+  document.getElementById('print-zone').innerHTML=`
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap');
+      *{box-sizing:border-box;margin:0;padding:0;}
+      body{font-family:'DM Sans',sans-serif;padding:2rem;color:#1A1A1A;font-size:13px;}
+      .inv-logo{font-family:serif;font-size:28px;font-weight:700;color:#D85A30;}
+      .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding-bottom:1rem;border-bottom:3px solid #D85A30;margin-bottom:1.25rem;}
+      .contact-line{font-size:11px;color:#888;margin-top:2px;}
+      .section-label{font-size:10px;font-weight:700;color:#D85A30;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+      .bill-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+      table{width:100%;border-collapse:collapse;margin-bottom:1rem;}
+      thead th{background:#1A1A1A;color:#fff;padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;}
+      tbody td{padding:8px 12px;border-bottom:1px solid #f0f0f0;}
+      .totals{display:flex;justify-content:flex-end;margin-bottom:1rem;}
+      .totals-inner{min-width:240px;}
+      .total-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;}
+      .total-row.grand{border-top:2px solid #D85A30;margin-top:4px;padding-top:7px;font-weight:700;font-size:14px;}
+      .bank-section{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #ddd;}
+      .bank-label{font-size:11px;font-weight:700;color:#1A1A1A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;}
+      .bank-row{display:flex;gap:8px;font-size:12px;padding:2px 0;}
+      .bank-key{color:#888;min-width:120px;}
+      .bank-val{font-weight:600;color:#1A1A1A;}
+      .pay-hist{font-size:11px;color:#888;margin-bottom:1rem;}
+      .pay-hist-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #f5f5f5;}
+      footer{margin-top:1.5rem;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:6px;text-align:center;}
+      .notes{font-size:11px;color:#888;font-style:italic;line-height:1.5;margin-top:.5rem;}
+      .status-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+    </style>
+    <div class="hdr">
+      <div>
+        ${logoHtml}
+        ${cv?`<div style="font-size:12px;font-weight:600;margin-top:5px">${cv}</div>`:''}
+        ${c.tagline?`<div class="contact-line">${c.tagline}</div>`:''}
+        ${c.alamat?`<div class="contact-line">${c.alamat}</div>`:''}
+        ${email?`<div class="contact-line">📧 ${email}</div>`:''}
+        ${hp?`<div class="contact-line">📱 ${hp}</div>`:''}
+        ${c.web?`<div class="contact-line">🌐 ${c.web}</div>`:''}
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:18px;font-weight:700;letter-spacing:2px">NOTA KONSINYASI</div>
+        <div style="font-family:monospace;font-size:14px;color:#D85A30;margin-top:2px">${t.invoice}</div>
+        <div class="contact-line">Tanggal: ${fDate(t.tgl)}</div>
+        ${dueDate?`<div style="font-size:11px;color:#A32D2D;font-weight:700">Due: ${fDate(dueDate)}</div>`:''}
+      </div>
+    </div>
+    <div style="margin-bottom:1rem">
+      <div style="font-weight:700;font-size:14px">${t.barberNama}</div>
+      ${barber?.kota?`<div class="contact-line">${barber.kota}</div>`:''}
+      ${barber?.telp?`<div class="contact-line">📱 ${barber.telp}</div>`:''}
+    </div>
+    <table>
+      <thead><tr><th>Produk</th><th style="text-align:center">Qty</th><th style="text-align:right">Harga Satuan</th><th style="text-align:right">Subtotal</th></tr></thead>
+      <tbody>${(t.items||[]).map(i=>`<tr>
+        <td>${i.produk}</td>
+        <td style="text-align:center">${i.qty}</td>
+        <td style="text-align:right">${fRp(i.harga)}</td>
+        <td style="text-align:right;font-weight:700;color:#D85A30">${fRp(i.subtotal)}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+    <div class="totals"><div class="totals-inner">
+      <div class="total-row"><span style="color:#888">Total Invoice</span><span style="font-weight:700;color:#D85A30">${fRp(t.total)}</span></div>
+      <div class="total-row"><span style="color:#888">Sudah Dibayar</span><span style="color:#3B6D11;font-weight:600">${fRp(t.dibayar||0)}</span></div>
+      <div class="total-row grand"><span>Sisa Tagihan</span><span style="color:${sisa>0?'#A32D2D':'#3B6D11'}">${fRp(sisa)}</span></div>
+    </div></div>
+    ${(t.payments&&t.payments.length)?`<div class="pay-hist">
+      <div style="font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Riwayat Pembayaran</div>
+      ${t.payments.map((p,i)=>`<div class="pay-hist-row">
+        <span>${i+1}. ${fDate(p.tgl)} · ${p.metode}${p.catatan?' · '+p.catatan:''}</span>
+        <span style="font-weight:600;color:#3B6D11">${fRp(p.jumlah)}</span>
+      </div>`).join('')}
+    </div>`:''}
+    ${notes?`<div class="notes">${notes}</div>`:''}
+    ${(bank||rek)?`
+    <div class="bank-section">
+      <div>
+        <div class="bank-label">Payment Detail</div>
+        ${bank?`<div class="bank-row"><span class="bank-key">Bank Name</span><span class="bank-val">: ${bank}</span></div>`:''}
+        ${an?`<div class="bank-row"><span class="bank-key">Account Name</span><span class="bank-val">: ${an}</span></div>`:''}
+        ${rek?`<div class="bank-row"><span class="bank-key">Account Number</span><span class="bank-val">: ${rek}</span></div>`:''}
+        <div class="bank-row"><span class="bank-key">Payment Reference</span><span class="bank-val">: ${t.invoice}</span></div>
+      </div>
+      <div>
+        <div class="bank-label">Other Information</div>
+        <div class="bank-row"><span class="bank-key">Customer Reference</span><span class="bank-val">:</span></div>
+      </div>
+    </div>`:''}
+    <footer>Sales Invoice #${t.invoice} · Dicetak ${new Date().toLocaleString('id-ID')} · Page 1 of 1</footer>
+  `;
+  window.print();
+}
+
+function exportInvoicePDF(){
+  const t=S.penjualan.find(x=>x.id===currentTrxId); if(!t) return;
+  const barber=S.barbers.find(b=>b.id===t.barberId);
+  const c=getCfg();
+  const sisa=Math.max(0,t.total-(t.dibayar||0));
+  const cv=t.invoiceCv||c.cv;
+  const email=t.invoiceEmail||c.email;
+  const hp=t.invoiceHp||c.hp;
+  const bank=t.invoiceBank||c.bank;
+  const rek=t.invoiceRekening||c.rekening;
+  const an=t.invoiceAtasNama||c.atasnama;
+  const dueDate=t.dueDate||(t.tgl?(()=>{const d=new Date(t.tgl+'T12:00:00');d.setDate(d.getDate()+(c.terms||14));return d.toISOString().split('T')[0];})():'');
+
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const W=210;
+  let y=0;
+
+  // Header bar
+  doc.setFillColor(26,26,26); doc.rect(0,0,W,30,'F');
+  doc.setFillColor(216,90,48); doc.rect(0,30,W,3,'F');
+
+  // Logo or brand name in header
+  if(c.logo){
+    try{
+      doc.addImage(c.logo,'PNG',10,4,50,22,'','FAST');
+    } catch(e){
+      doc.setTextColor(255,255,255); doc.setFontSize(18); doc.setFont('helvetica','bold');
+      doc.text(c.brand||'BEIVZ',10,18);
+    }
+  } else {
+    doc.setTextColor(255,255,255); doc.setFontSize(18); doc.setFont('helvetica','bold');
+    doc.text(c.brand||'BEIVZ',10,18);
+  }
+  doc.setTextColor(200,200,200); doc.setFontSize(8); doc.setFont('helvetica','normal');
+  if(c.tagline) doc.text(c.tagline,10,25);
+  // Invoice label right side
+  doc.setTextColor(255,255,255); doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text('INVOICE',W-12,14,{align:'right'});
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.setTextColor(216,90,48); doc.setFillColor(216,90,48);
+  doc.text(t.invoice,W-12,21,{align:'right'});
+  doc.setTextColor(200,200,200); doc.setFontSize(8);
+  doc.text(`Tgl: ${fDate(t.tgl)}`,W-12,27,{align:'right'});
+  y=38;
+
+  // CV info block
+  doc.setTextColor(30,30,30); doc.setFontSize(9); doc.setFont('helvetica','bold');
+  if(cv){ doc.text(cv,12,y); y+=5; }
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(100,100,100);
+  if(c.alamat){ doc.text(c.alamat,12,y); y+=4; }
+  if(email){ doc.text(`Email: ${email}`,12,y); y+=4; }
+  if(hp){ doc.text(`WA/HP: ${hp}`,12,y); y+=4; }
+  if(c.web){ doc.text(`Web: ${c.web}`,12,y); y+=4; }
+
+  // Invoice meta right
+  let ymeta=38;
+  doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(80,80,80);
+  doc.text('Tanggal Invoice:',W-60,ymeta); doc.setFont('helvetica','normal'); doc.text(fDate(t.tgl),W-12,ymeta,{align:'right'}); ymeta+=5;
+  if(dueDate){
+    doc.setFont('helvetica','bold'); doc.setTextColor(163,45,45);
+    doc.text('Due Date:',W-60,ymeta); doc.setFont('helvetica','normal'); doc.text(fDate(dueDate),W-12,ymeta,{align:'right'}); ymeta+=5;
+  }
+  doc.setTextColor(80,80,80); doc.setFont('helvetica','bold');
+  doc.text('Tipe:',W-60,ymeta); doc.setFont('helvetica','normal'); doc.text(t.tipe||'—',W-12,ymeta,{align:'right'}); ymeta+=5;
+
+  y=Math.max(y,ymeta)+6;
+
+  // Bill to / divider
+  doc.setDrawColor(200,200,200); doc.line(10,y,W-10,y); y+=6;
+  doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30); doc.setFontSize(10);
+  doc.text(t.barberNama,12,y+4);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(100,100,100);
+  if(barber?.kota) doc.text(barber.kota,12,y+10);
+  if(barber?.telp) doc.text(barber.telp,12,y+15);
+  y+=22;
+
+  // Products table
+  doc.autoTable({
+    startY:y,
+    margin:{left:10,right:10},
+    head:[['Produk','Qty','Harga Satuan','Subtotal']],
+    body:(t.items||[]).map(i=>[i.produk,i.qty,fRp(i.harga),fRp(i.subtotal)]),
+    headStyles:{fillColor:[26,26,26],fontSize:9},
+    styles:{fontSize:9},
+    columnStyles:{1:{halign:'center',cellWidth:18},2:{halign:'right',cellWidth:36},3:{halign:'right',cellWidth:36,fontStyle:'bold',textColor:[216,90,48]}}
+  });
+  y=doc.lastAutoTable.finalY+5;
+
+  // Totals block
+  const tblW=100;
+  const tx=W-10-tblW;
+  doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.setTextColor(100,100,100); doc.text('Total Invoice',tx,y+5);
+  doc.setFont('helvetica','bold'); doc.setTextColor(216,90,48); doc.text(fRp(t.total),W-10,y+5,{align:'right'}); y+=7;
+  doc.setFont('helvetica','normal'); doc.setTextColor(100,100,100); doc.text('Sudah Dibayar',tx,y+5);
+  doc.setFont('helvetica','bold'); doc.setTextColor(59,109,17); doc.text(fRp(t.dibayar||0),W-10,y+5,{align:'right'}); y+=7;
+  doc.setDrawColor(216,90,48); doc.line(tx,y,W-10,y); y+=4;
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30); doc.text('Sisa Tagihan',tx,y+5);
+  doc.setTextColor(sisa>0?163:59,sisa>0?45:109,sisa>0?45:17); doc.text(fRp(sisa),W-10,y+5,{align:'right'}); y+=12;
+
+  // Payment history
+  if(t.payments?.length){
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(100,100,100);
+    doc.text('Riwayat Pembayaran:',10,y); y+=4;
+    doc.setFont('helvetica','normal');
+    t.payments.forEach((p,i)=>{
+      doc.setTextColor(120,120,120);
+      doc.text(`${i+1}. ${fDate(p.tgl)} · ${p.metode}${p.catatan?' · '+p.catatan:''}`,10,y+4);
+      doc.setTextColor(59,109,17); doc.text(fRp(p.jumlah),W-10,y+4,{align:'right'});
+      y+=6;
+    });
+  }
+
+  // Notes
+  const notes=t.catatan||c.notes||'';
+  if(notes){
+    y+=3;
+    doc.setFontSize(8); doc.setFont('helvetica','italic'); doc.setTextColor(130,130,130);
+    const lines=doc.splitTextToSize(notes,W-20);
+    doc.text(lines,10,y); y+=lines.length*4+4;
+  }
+
+  // Payment Detail section at bottom (like reference)
+  if(bank||rek){
+    y += 4;
+    doc.setDrawColor(210,210,210); doc.line(10,y,W-10,y); y+=7;
+    // Left col: Payment Detail
+    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30);
+    doc.text('Payment Detail',10,y); 
+    // Right col: Other Information
+    doc.text('Other Information',W/2+5,y);
+    y+=6;
+    doc.setFontSize(8); doc.setFont('helvetica','normal');
+    const rows=[
+      bank?['Bank Name',bank]:null,
+      an?['Account Name',an]:null,
+      rek?['Account Number',rek]:null,
+      ['Payment Reference',t.invoice],
+    ].filter(Boolean);
+    rows.forEach(([k2,v2])=>{
+      doc.setTextColor(120,120,120); doc.text(k2+' :',10,y);
+      doc.setTextColor(30,30,30); doc.setFont('helvetica','bold');
+      doc.text(v2,55,y);
+      doc.setFont('helvetica','normal');
+      y+=5;
+    });
+    // Customer Reference on right
+    doc.setTextColor(120,120,120); doc.text('Customer Reference :',W/2+5,y-rows.length*5+5);
+  }
+
+  // Footer line
+  doc.setDrawColor(210,210,210); doc.line(10,280,W-10,280);
+  doc.setFontSize(7); doc.setTextColor(150,150,150); doc.setFont('helvetica','normal');
+  doc.text(`Sales Invoice #${t.invoice}`,10,285);
+  doc.text('Page 1 of 1',W-10,285,{align:'right'});
+
+  doc.save(`Invoice_${t.invoice}.pdf`);
+}
+
+// ========== EXPORT PDF ==========
+function addPDFHdr(doc,title,ls=false){
+  const W=ls?297:210;
+  doc.setFillColor(26,26,26); doc.rect(0,0,W,28,'F');
+  doc.setFillColor(216,90,48); doc.rect(0,28,W,3,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(15); doc.setFont('helvetica','bold');
+  doc.text('BEIVZ Barber Roots',14,12);
+  doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text(title,14,21);
+  doc.setFontSize(9); doc.text(new Date().toLocaleDateString('id-ID'),W-14,16,{align:'right'});
+}
+function addPDFFtr(doc,ls=false){
+  const W=ls?297:210; const H=ls?210:297;
+  doc.setFontSize(7); doc.setTextColor(170,170,170);
+  doc.text('BEIVZ · beivz.id · Dicetak '+new Date().toLocaleString('id-ID'),W/2,H-8,{align:'center'});
+}
+
+function exportPDFBarber(){
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  addPDFHdr(doc,'Data Barber');
+  doc.autoTable({startY:38,head:[['#','Nama Barbershop','Pemilik','Kota','Telepon','Tipe']],
+    body:S.barbers.map((b,i)=>[i+1,b.nama,b.pemilik,b.kota,b.telp||'—',b.status]),
+    headStyles:{fillColor:[26,26,26]},styles:{fontSize:9}});
+  addPDFFtr(doc); doc.save('BEIVZ_Data_Barber.pdf');
+}
+
+function exportPDFPenjualan(){
+  const {jsPDF}=window.jspdf; const doc=new jsPDF('landscape');
+  addPDFHdr(doc,'Data Penjualan',true);
+  doc.autoTable({startY:38,
+    head:[['Invoice','Tanggal','Barber','Items','Total','Dibayar','Sisa','Status']],
+    body:S.penjualan.map(p=>{
+      const items=(p.items||[]).map(i=>`${i.produk} x${i.qty}`).join(', ');
+      const sisa=Math.max(0,p.total-(p.dibayar||0));
+      const st=payStatus(p)==='lunas'?'Lunas':payStatus(p)==='sebagian'?'Sebagian':'Belum';
+      return [p.invoice,fDate(p.tgl),p.barberNama,items,fRp(p.total),fRp(p.dibayar||0),fRp(sisa),st];
+    }),
+    headStyles:{fillColor:[26,26,26]},styles:{fontSize:8},
+    columnStyles:{4:{textColor:[216,90,48],fontStyle:'bold'}}
+  });
+  const total=S.penjualan.reduce((a,p)=>a+p.total,0);
+  const y=doc.lastAutoTable.finalY+6;
+  doc.setFont('helvetica','bold'); doc.setTextColor(216,90,48);
+  doc.text(`Total Revenue: ${fRp(total)}`,270,y,{align:'right'});
+  addPDFFtr(doc,true); doc.save('BEIVZ_Data_Penjualan.pdf');
+}
+
+function exportPDFKonsinyasi(){
+  const {jsPDF}=window.jspdf; const doc=new jsPDF('landscape');
+  addPDFHdr(doc,'Konsinyasi',true);
+  doc.autoTable({startY:38,
+    head:[['Barber','Produk','Kirim','Terjual','Retur','Sisa','Harga','Nilai Terjual','Dibayar','Sisa Bayar']],
+    body:S.konsinyasi.map(k=>{
+      const sisa=k.qty-k.terjual-(k.retur||0);
+      return [k.barberNama,k.produk,k.qty,k.terjual,k.retur||0,sisa,fRp(k.harga),fRp(k.terjual*k.harga),fRp(k.dibayar||0),fRp(Math.max(0,k.terjual*k.harga-(k.dibayar||0)))];
+    }),
+    headStyles:{fillColor:[26,26,26]},styles:{fontSize:7.5}});
+  addPDFFtr(doc,true); doc.save('BEIVZ_Konsinyasi.pdf');
+}
+
+function exportPDFRiwayat(){
+  const dari=document.getElementById('rw-dari').value;
+  const sampai=document.getElementById('rw-sampai').value;
+  let data=[...S.penjualan].sort((a,b)=>b.tgl.localeCompare(a.tgl));
+  if(dari) data=data.filter(p=>p.tgl>=dari);
+  if(sampai) data=data.filter(p=>p.tgl<=sampai);
+  const {jsPDF}=window.jspdf; const doc=new jsPDF('landscape');
+  addPDFHdr(doc,'Riwayat Penjualan',true);
+  if(dari||sampai){doc.setFontSize(9);doc.setTextColor(130,130,130);doc.text(`Periode: ${dari?fDate(dari):'—'} s/d ${sampai?fDate(sampai):'—'}`,14,36);}
+  doc.autoTable({startY:dari||sampai?42:38,
+    head:[['Invoice','Tanggal','Barber','Items','Total','Dibayar','Sisa','Status']],
+    body:data.map(p=>{
+      const items=(p.items||[]).map(i=>`${i.produk.replace(' Pomade','').replace('Hair ','')}`).join(', ');
+      const sisa=Math.max(0,p.total-(p.dibayar||0));
+      const st=payStatus(p)==='lunas'?'Lunas':payStatus(p)==='sebagian'?'Sebagian':'Belum';
+      return [p.invoice,fDate(p.tgl),p.barberNama,items,fRp(p.total),fRp(p.dibayar||0),fRp(sisa),st];
+    }),
+    headStyles:{fillColor:[26,26,26]},styles:{fontSize:8},
+    columnStyles:{4:{textColor:[216,90,48],fontStyle:'bold'}}
+  });
+  const total=data.reduce((a,p)=>a+p.total,0);
+  const y=doc.lastAutoTable.finalY+6;
+  doc.setFont('helvetica','bold'); doc.setTextColor(216,90,48);
+  doc.text(`Total: ${fRp(total)}`,270,y,{align:'right'});
+  addPDFFtr(doc,true); doc.save('BEIVZ_Riwayat.pdf');
+}
+
+function printPage(){ window.print(); }
+
+// ========== UTILS ==========
+function fRp(n){ return 'Rp '+Math.round(n||0).toLocaleString('id-ID'); }
+function fDate(d){
+  if(!d) return '—';
+  try{ return new Date(d+'T12:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
+  catch(e){ return d; }
+}
+
+// ========== INIT ==========
+load();
+
+// Seed jika kosong
+if(!S.barbers.length){
+  S.barbers=[
+    {id:1,nama:'Kings Barber Bogor',pemilik:'Rizal Adnan',kota:'Bogor',alamat:'Jl. Sudirman No. 14',telp:'0812-3456-7890',ig:'@kingsbarberbogor',join:'2023-03-15',status:'Konsinyasi',catatan:'Pelanggan setia sejak awal'},
+    {id:2,nama:'Premium Cut Jakarta',pemilik:'Denny Wijaya',kota:'Jakarta',alamat:'Jl. Kemang Raya No. 5',telp:'0813-9876-5432',ig:'@premiumcutjkt',join:'2023-06-01',status:'Beli Putus',catatan:''},
+    {id:3,nama:'Urban Barber Depok',pemilik:'Hendra Saputra',kota:'Depok',alamat:'Jl. Margonda No. 88',telp:'0857-1234-5678',ig:'@urbanbarber',join:'2024-01-10',status:'Konsinyasi',catatan:''},
+    {id:4,nama:'Slick & Sharp',pemilik:'Fajar Nugroho',kota:'Bandung',alamat:'Jl. Braga No. 22',telp:'0822-1111-2222',ig:'@slicknsharp',join:'2024-05-01',status:'Prospek',catatan:'Sedang negosiasi harga'},
+  ];
+  S.penjualan=[
+    {id:101,invoice:'INV240115-001',tgl:'2024-01-15',barberId:1,barberNama:'Kings Barber Bogor',tipe:'Beli Putus',
+     items:[{produk:'Oil-Based Pomade',qty:6,harga:95000,subtotal:570000},{produk:'Hair Clay',qty:3,harga:110000,subtotal:330000}],
+     total:900000,dibayar:500000,payments:[{jumlah:500000,tgl:'2024-01-15',metode:'Transfer',catatan:'DP'}],catatan:'DP 500rb, sisa menyusul'},
+    {id:102,invoice:'INV240120-002',tgl:'2024-01-20',barberId:2,barberNama:'Premium Cut Jakarta',tipe:'Beli Putus',
+     items:[{produk:'Water-Based Pomade',qty:4,harga:85000,subtotal:340000},{produk:'Hair Perfume',qty:2,harga:120000,subtotal:240000}],
+     total:580000,dibayar:580000,payments:[{jumlah:580000,tgl:'2024-01-20',metode:'Transfer',catatan:''}],catatan:''},
+    {id:103,invoice:'INV240205-003',tgl:'2024-02-05',barberId:3,barberNama:'Urban Barber Depok',tipe:'Konsinyasi',
+     items:[{produk:'Oil-Based Pomade',qty:5,harga:90000,subtotal:450000}],
+     total:450000,dibayar:0,payments:[],catatan:'Konsinyasi, bayar setelah laku'},
+  ];
+  S.konsinyasi=[
+    {id:201,barberId:1,barberNama:'Kings Barber Bogor',
+     items:[{produk:'Oil-Based Pomade',qty:12,harga:95000,terjual:7,retur:0},{produk:'Hair Clay',qty:6,harga:110000,terjual:2,retur:0}],
+     qty:18,terjual:9,retur:0,dibayar:380000,payments:[{jumlah:380000,tgl:'2024-02-20',metode:'Transfer'}],tglKirim:'2024-02-01',jatuhTempo:'2024-03-01',status:'Aktif',catatan:''},
+    {id:202,barberId:3,barberNama:'Urban Barber Depok',
+     items:[{produk:'Hair Perfume',qty:6,harga:120000,terjual:4,retur:0}],
+     qty:6,terjual:4,retur:0,dibayar:0,payments:[],tglKirim:'2024-02-10',jatuhTempo:'2024-03-10',status:'Aktif',catatan:''},
+  ];
+  S.invCounter=4;
+  save();
+}
+
+// Ensure customProds initialized for existing users
+if(!S.customProds || !S.customProds.length) S.customProds = [...PRODS_DEFAULT];
+
+renderBarber();
+</script>
+</body>
+</html>
