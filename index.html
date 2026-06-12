@@ -181,7 +181,7 @@ tbody td{padding:9px 12px;color:var(--ink-mid);vertical-align:middle;}
 
 <header class="app-header">
   <div class="app-logo"><span class="logo-dot"></span>Beivz Barber Roots</div>
-  <span class="app-version">v2.4</span>
+  <span class="app-version">v2.3</span>
 </header>
 
 <nav class="app-nav">
@@ -238,8 +238,6 @@ tbody td{padding:9px 12px;color:var(--ink-mid);vertical-align:middle;}
   <div class="stats-grid">
     <div class="stat-card"><div class="stat-label">Total Transaksi</div><div class="stat-value" id="sp-total">0</div><div class="stat-meta">Semua invoice</div></div>
     <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value" id="sp-rev" style="font-size:17px">Rp 0</div><div class="stat-meta">Gross sales</div></div>
-    <div class="stat-card"><div class="stat-label">Total Potongan</div><div class="stat-value" id="sp-potongan" style="font-size:17px;color:var(--danger)">Rp 0</div><div class="stat-meta">Admin & voucher</div></div>
-    <div class="stat-card"><div class="stat-label">Net Revenue</div><div class="stat-value" id="sp-net" style="font-size:17px;color:var(--success)">Rp 0</div><div class="stat-meta">Setelah potongan</div></div>
     <div class="stat-card"><div class="stat-label">Sudah Dibayar</div><div class="stat-value" id="sp-bayar" style="font-size:17px">Rp 0</div><div class="stat-meta">Terkumpul</div></div>
     <div class="stat-card"><div class="stat-label">Sisa Tagihan</div><div class="stat-value" id="sp-sisa" style="font-size:17px;color:var(--danger)">Rp 0</div><div class="stat-meta">Outstanding</div></div>
   </div>
@@ -253,7 +251,7 @@ tbody td{padding:9px 12px;color:var(--ink-mid);vertical-align:middle;}
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Invoice</th><th>Tanggal</th><th>Barber</th><th>Items</th><th>Total</th><th>Potongan</th><th>Net</th><th>Dibayar</th><th>Sisa</th><th>Status</th><th>Aksi</th></tr></thead>
+        <thead><tr><th>Invoice</th><th>Tanggal</th><th>Barber</th><th>Items</th><th>Total</th><th>Dibayar</th><th>Sisa</th><th>Status</th><th>Aksi</th></tr></thead>
         <tbody id="tb-penjualan"></tbody>
       </table>
     </div>
@@ -488,27 +486,9 @@ tbody td{padding:9px 12px;color:var(--ink-mid);vertical-align:middle;}
 
       <div class="sec-title-bar" style="margin-top:1rem">Pembayaran</div>
       <div class="form-grid">
-        <div class="form-group">
+        <div class="form-group" style="grid-column:span 2">
           <label>Total Invoice</label>
           <input type="text" id="ep-total-display" readonly style="font-weight:700;color:var(--coral);font-size:15px;">
-        </div>
-        <div class="form-group">
-          <label>Tipe Potongan</label>
-          <select id="ep-pot-tipe">
-            <option value="">— Tidak Ada —</option>
-            <option value="Admin Marketplace">Admin Marketplace</option>
-            <option value="Voucher Promo">Voucher Promo</option>
-            <option value="Admin + Voucher">Admin + Voucher</option>
-            <option value="Lainnya">Lainnya</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Jumlah Potongan (Rp)</label>
-          <input type="number" id="ep-potongan" placeholder="0" min="0" oninput="calcPayment()">
-        </div>
-        <div class="form-group">
-          <label>Net Diterima</label>
-          <input type="text" id="ep-net-display" readonly style="font-weight:700;color:var(--success);font-size:15px;">
         </div>
       </div>
       <div class="form-grid" style="margin-top:.6rem">
@@ -765,7 +745,7 @@ let currentTrxId = null;
 
 // ========== GOOGLE SHEETS CONFIG ==========
 // Ganti dengan URL Apps Script kamu setelah deploy
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzbsfmW7u1Qc0h1EZyrnSpOoueC-jrKggFI3p1qXLE7hPBzmWt1GKsr5eLPv3RqDEgZ/exec';  // https://script.google.com/macros/s/AKfycbwL2mevcylGELWoFfKq3-GIrpVAE6P0ZK27-h-2PY-Y0ksIdNmkhr1BESfEuMCB9iJY2g/exec
+const GAS_URL = '';  // https://script.google.com/macros/s/AKfycbwL2mevcylGELWoFfKq3-GIrpVAE6P0ZK27-h-2PY-Y0ksIdNmkhr1BESfEuMCB9iJY2g/exec
 
 function isOnline(){ return GAS_URL && GAS_URL.length > 10; }
 
@@ -1103,26 +1083,20 @@ function recalcTotal(){
     if(subEl) subEl.textContent=fRp(sub);
     total+=sub;
   });
+  document.getElementById('ep-total-display').value=fRp(total);
   calcPayment();
 }
 
 function calcPayment(){
   const total=getProductsTotal();
-  const potongan=parseFloat(document.getElementById('ep-potongan').value)||0;
-  const net=Math.max(0,total-potongan);
   const bayar=parseFloat(document.getElementById('ep-bayar').value)||0;
-  const sisa=Math.max(0,net-bayar);
-  document.getElementById('ep-total-display').value=fRp(total);
-  document.getElementById('ep-net-display').value=fRp(net);
+  const sisa=Math.max(0,total-bayar);
   let statusBayar='belum';
-  if(bayar>=net&&net>0) statusBayar='lunas';
+  if(bayar>=total&&total>0) statusBayar='lunas';
   else if(bayar>0) statusBayar='sebagian';
-  const potTipe=document.getElementById('ep-pot-tipe').value;
   document.getElementById('ep-payment-summary').innerHTML=`
     <div class="sec-title" style="margin:0 0 .5rem">Ringkasan Pembayaran</div>
-    <div class="payment-row"><span class="lbl">Total Invoice (Gross)</span><span class="val coral">${fRp(total)}</span></div>
-    ${potongan>0?`<div class="payment-row"><span class="lbl">Potongan${potTipe?' ('+potTipe+')':''}</span><span class="val red">− ${fRp(potongan)}</span></div>`:''}
-    <div class="payment-row"><span class="lbl">Net Diterima</span><span class="val" style="color:var(--success)">${fRp(net)}</span></div>
+    <div class="payment-row"><span class="lbl">Total Invoice</span><span class="val coral">${fRp(total)}</span></div>
     <div class="payment-row"><span class="lbl">Dibayar Sekarang</span><span class="val green">${fRp(bayar)}</span></div>
     <div class="payment-row total-row"><span class="lbl">Sisa Tagihan</span><span class="val red">${fRp(sisa)}</span></div>
   `;
@@ -1158,8 +1132,6 @@ function openAddPenjualan(){
   document.getElementById('ep-tgl').value=today();
   document.getElementById('ep-tgl-bayar').value=today();
   document.getElementById('ep-bayar').value='';
-  document.getElementById('ep-potongan').value='';
-  document.getElementById('ep-pot-tipe').value='';
   document.getElementById('ep-catatan').value='';
   document.getElementById('ep-metode').value='Transfer';
   document.getElementById('product-rows').innerHTML='';
@@ -1178,8 +1150,6 @@ function openEditPenjualan(id){
   document.getElementById('ep-tgl').value=t.tgl;
   document.getElementById('ep-catatan').value=t.catatan||'';
   document.getElementById('ep-tipe').value=t.tipe||'Beli Putus';
-  document.getElementById('ep-potongan').value=t.potongan||'';
-  document.getElementById('ep-pot-tipe').value=t.potTipe||'';
   document.getElementById('product-rows').innerHTML='';
   productRowCount=0;
   fillBarberSel('ep-barber');
@@ -1197,9 +1167,6 @@ function savePenjualan(){
   const items=collectProducts();
   if(!items.length){alert('Tambahkan minimal 1 produk!');return;}
   const total=items.reduce((a,i)=>a+i.subtotal,0);
-  const potongan=parseFloat(document.getElementById('ep-potongan').value)||0;
-  const potTipe=document.getElementById('ep-pot-tipe').value||'';
-  const net=Math.max(0,total-potongan);
   const bayarBaru=parseFloat(document.getElementById('ep-bayar').value)||0;
   const editId=document.getElementById('ep-id').value;
   const barber=S.barbers.find(b=>b.id==barberId);
@@ -1210,7 +1177,6 @@ function savePenjualan(){
     t.barberNama=barber?.nama||'—';
     t.tgl=document.getElementById('ep-tgl').value;
     t.items=items; t.total=total;
-    t.potongan=potongan; t.potTipe=potTipe; t.net=net;
     t.tipe=document.getElementById('ep-tipe').value;
     t.catatan=document.getElementById('ep-catatan').value;
     // recalculate dibayar from existing payments
@@ -1228,7 +1194,6 @@ function savePenjualan(){
       id:uid(), invoice:document.getElementById('ep-invoice').value,
       tgl:document.getElementById('ep-tgl').value, barberId:parseInt(barberId), barberNama:barber?.nama||'—',
       tipe:document.getElementById('ep-tipe').value, items, total,
-      potongan, potTipe, net,
       dibayar:bayarBaru, payments,
       catatan:document.getElementById('ep-catatan').value,
     };
@@ -1247,17 +1212,15 @@ function deletePenjualan(id){
 }
 
 function payBadge(t){
-  const net=t.net!=null?t.net:t.total-(t.potongan||0);
-  const sisa=net-(t.dibayar||0);
-  if(sisa<=0&&net>0) return `<span class="badge badge-lunas">Lunas</span>`;
+  const sisa=t.total-(t.dibayar||0);
+  if(sisa<=0&&t.total>0) return `<span class="badge badge-lunas">Lunas</span>`;
   if((t.dibayar||0)>0) return `<span class="badge badge-sebagian">Sebagian</span>`;
   return `<span class="badge badge-belum">Belum Dibayar</span>`;
 }
 
 function payStatus(t){
-  const net=t.net!=null?t.net:t.total-(t.potongan||0);
-  const sisa=net-(t.dibayar||0);
-  if(sisa<=0&&net>0) return 'lunas';
+  const sisa=t.total-(t.dibayar||0);
+  if(sisa<=0&&t.total>0) return 'lunas';
   if((t.dibayar||0)>0) return 'sebagian';
   return 'belum';
 }
@@ -1271,31 +1234,24 @@ function renderPenjualan(){
     return ms&&mb;
   });
   const totalRev=S.penjualan.reduce((a,p)=>a+p.total,0);
-  const totalPotongan=S.penjualan.reduce((a,p)=>a+(p.potongan||0),0);
-  const totalNet=S.penjualan.reduce((a,p)=>a+(p.net!=null?p.net:p.total-(p.potongan||0)),0);
   const totalBayar=S.penjualan.reduce((a,p)=>a+(p.dibayar||0),0);
   document.getElementById('sp-total').textContent=S.penjualan.length;
   document.getElementById('sp-rev').textContent=fRp(totalRev);
-  document.getElementById('sp-potongan').textContent=fRp(totalPotongan);
-  document.getElementById('sp-net').textContent=fRp(totalNet);
   document.getElementById('sp-bayar').textContent=fRp(totalBayar);
-  document.getElementById('sp-sisa').textContent=fRp(totalNet-totalBayar);
+  document.getElementById('sp-sisa').textContent=fRp(totalRev-totalBayar);
   const tb=document.getElementById('tb-penjualan');
-  if(!data.length){tb.innerHTML=`<tr><td colspan="10"><div class="empty-state"><div class="empty-icon">🛒</div><p>Belum ada data penjualan.</p></div></td></tr>`;return;}
+  if(!data.length){tb.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">🛒</div><p>Belum ada data penjualan.</p></div></td></tr>`;return;}
   tb.innerHTML=data.sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(p=>{
     const itemSummary=(p.items||[]).map(i=>`${i.produk.replace(' Pomade','').replace('Hair ','')}`).join(', ');
-    const net=p.net!=null?p.net:p.total-(p.potongan||0);
-    const sisa=net-(p.dibayar||0);
+    const sisa=p.total-(p.dibayar||0);
     return `<tr>
       <td class="mono">${p.invoice}</td>
       <td>${fDate(p.tgl)}</td>
       <td><strong>${p.barberNama}</strong></td>
       <td class="text-sm text-muted">${(p.items||[]).length} item · ${itemSummary}</td>
       <td class="text-coral">${fRp(p.total)}</td>
-      <td style="color:var(--danger);font-size:12px">${p.potongan?`− ${fRp(p.potongan)}<br><span style="font-size:10px;color:var(--muted)">${p.potTipe||''}</span>`:'—'}</td>
-      <td style="color:var(--success);font-weight:600">${fRp(net)}</td>
       <td style="color:var(--success)">${fRp(p.dibayar||0)}</td>
-      <td style="color:var(--danger)">${fRp(Math.max(0,sisa))}</td>
+      <td style="color:var(--danger)">${fRp(sisa)}</td>
       <td>${payBadge(p)}</td>
       <td><div class="btn-group">
         <button class="btn btn-outline btn-xs" onclick="showPenjualanDetail(${p.id})">Detail</button>
@@ -1328,11 +1284,9 @@ function showPenjualanDetail(id){
     </div>
     <div class="sec-title-bar">Status Pembayaran</div>
     <div class="payment-section">
-      <div class="payment-row"><span class="lbl">Total Invoice (Gross)</span><span class="val coral">${fRp(t.total)}</span></div>
-      ${t.potongan?`<div class="payment-row"><span class="lbl">Potongan${t.potTipe?' ('+t.potTipe+')':''}</span><span class="val red">− ${fRp(t.potongan)}</span></div>`:''}
-      <div class="payment-row"><span class="lbl">Net Diterima</span><span class="val" style="color:var(--success)">${fRp(t.net!=null?t.net:t.total-(t.potongan||0))}</span></div>
+      <div class="payment-row"><span class="lbl">Total Invoice</span><span class="val coral">${fRp(t.total)}</span></div>
       <div class="payment-row"><span class="lbl">Total Dibayar</span><span class="val green">${fRp(t.dibayar||0)}</span></div>
-      <div class="payment-row total-row"><span class="lbl">Sisa Tagihan</span><span class="val red">${fRp(Math.max(0,(t.net!=null?t.net:t.total-(t.potongan||0))-(t.dibayar||0)))}</span></div>
+      <div class="payment-row total-row"><span class="lbl">Sisa Tagihan</span><span class="val red">${fRp(sisa)}</span></div>
     </div>
     ${(t.payments&&t.payments.length)?`
     <div class="sec-title-bar">Riwayat Pembayaran</div>
@@ -1359,15 +1313,12 @@ function openAddPayment(id){
   document.getElementById('ap-jumlah').value='';
   document.getElementById('ap-tgl').value=today();
   document.getElementById('ap-catatan').value='';
-  const net=t.net!=null?t.net:t.total-(t.potongan||0);
-  const sisa=net-(t.dibayar||0);
+  const sisa=t.total-(t.dibayar||0);
   document.getElementById('ap-summary').innerHTML=`
     <div class="sec-title" style="margin:0 0 .5rem">Invoice ${t.invoice}</div>
-    <div class="payment-row"><span class="lbl">Total (Gross)</span><span class="val coral">${fRp(t.total)}</span></div>
-    ${t.potongan?`<div class="payment-row"><span class="lbl">Potongan${t.potTipe?' ('+t.potTipe+')':''}</span><span class="val red">− ${fRp(t.potongan)}</span></div>`:''}
-    <div class="payment-row"><span class="lbl">Net Diterima</span><span class="val" style="color:var(--success)">${fRp(net)}</span></div>
+    <div class="payment-row"><span class="lbl">Total</span><span class="val coral">${fRp(t.total)}</span></div>
     <div class="payment-row"><span class="lbl">Sudah Dibayar</span><span class="val green">${fRp(t.dibayar||0)}</span></div>
-    <div class="payment-row total-row"><span class="lbl">Sisa</span><span class="val red">${fRp(Math.max(0,sisa))}</span></div>
+    <div class="payment-row total-row"><span class="lbl">Sisa</span><span class="val red">${fRp(sisa)}</span></div>
   `;
   openModal('m-add-payment');
 }
@@ -2713,8 +2664,22 @@ function printPage(){ window.print(); }
 function fRp(n){ return 'Rp '+Math.round(n||0).toLocaleString('id-ID'); }
 function fDate(d){
   if(!d) return '—';
-  try{ return new Date(d+'T12:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
-  catch(e){ return d; }
+  try{
+    // Normalize: handle ISO strings, YYYY-MM-DD, DD/MM/YYYY, timestamps
+    let s = String(d).trim();
+    // Already a number (timestamp)
+    if(/^\d{10,}$/.test(s)) return new Date(parseInt(s)).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+    // DD/MM/YYYY → convert to YYYY-MM-DD
+    if(/^\d{2}\/\d{2}\/\d{4}$/.test(s)){ const [dd,mm,yy]=s.split('/'); s=`${yy}-${mm}-${dd}`; }
+    // Strip time if present, keep date part
+    if(s.includes('T')) s = s.split('T')[0];
+    // Validate YYYY-MM-DD
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(s)) return '—';
+    const dt = new Date(s+'T12:00:00');
+    if(isNaN(dt.getTime())) return '—';
+    return dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+  }
+  catch(e){ return '—'; }
 }
 
 // ========== INIT ==========
@@ -2753,6 +2718,42 @@ if(!S.barbers.length){
 
 // Ensure customProds initialized for existing users
 if(!S.customProds || !S.customProds.length) S.customProds = [...PRODS_DEFAULT];
+
+// ========== DATA REPAIR ==========
+// Fix invalid tgl by extracting date from invoice number (INV260609-001 → 2026-06-09)
+(function repairDates(){
+  let changed = false;
+  function extractDateFromInvoice(inv){
+    if(!inv) return null;
+    // Format: INV{YY}{MM}{DD}-{seq}  e.g. INV260609-001
+    const m = String(inv).match(/^INV(\d{2})(\d{2})(\d{2})-/);
+    if(m){
+      const yy = parseInt(m[1]);
+      const year = yy >= 24 ? 2000+yy : 2000+yy; // all 2024+
+      return `${year}-${m[2]}-${m[3]}`;
+    }
+    return null;
+  }
+  function isValidDate(d){
+    if(!d) return false;
+    const s = String(d).trim();
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+    return !isNaN(new Date(s+'T12:00:00').getTime());
+  }
+  (S.penjualan||[]).forEach(p=>{
+    if(!isValidDate(p.tgl)){
+      const fixed = extractDateFromInvoice(p.invoice);
+      if(fixed){ p.tgl = fixed; changed = true; }
+    }
+  });
+  (S.konsinyasi||[]).forEach(k=>{
+    if(!isValidDate(k.tglKirim)){
+      // konsinyasi has no invoice, just clear to avoid crash
+      if(k.tglKirim){ k.tglKirim = null; changed = true; }
+    }
+  });
+  if(changed){ save(); console.log('[BEIVZ] Date repair applied.'); }
+})();
 
 renderBarber();
 
