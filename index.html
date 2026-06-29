@@ -190,6 +190,10 @@ tbody td{padding:9px 12px;color:var(--ink-mid);vertical-align:middle;}
   <div class="nav-item" onclick="nav('konsinyasi')" data-page="konsinyasi">📦 Konsinyasi</div>
   <div class="nav-item" onclick="nav('riwayat')" data-page="riwayat">📋 Riwayat</div>
   <div class="nav-item" onclick="nav('settings')" data-page="settings">⚙ Pengaturan Invoice</div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 8px;">
+    <button onclick="exportDataJSON()" style="background:#2d6a4f;color:#fff;border:none;border-radius:6px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">⬇ Export Data</button>
+    <label style="background:#1a4a7a;color:#fff;border:none;border-radius:6px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;margin:0;">⬆ Import Data<input type="file" accept=".json" onchange="importDataJSON(event)" style="display:none;"></label>
+  </div>
 </nav>
 
 <main class="app-main">
@@ -2759,6 +2763,61 @@ renderBarber();
 
 // Load dari Google Sheets jika sudah dikonfigurasi
 loadFromSheets();
+
+// ===== EXPORT / IMPORT JSON =====
+function exportDataJSON() {
+  try {
+    const snapshot = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      snapshot[key] = localStorage.getItem(key);
+    }
+    const blob = new Blob([JSON.stringify(snapshot, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const now = new Date();
+    const tgl = now.toISOString().slice(0,10);
+    a.href = url;
+    a.download = `barberoots-backup-${tgl}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('✅ Data berhasil diexport!\nFile: barberoots-backup-' + tgl + '.json\n\nSimpan file ini dan gunakan "Import Data" di HP untuk sync data.');
+  } catch(e) {
+    alert('❌ Gagal export: ' + e.message);
+  }
+}
+
+function importDataJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!confirm('⚠️ Import akan MENIMPA semua data yang ada di perangkat ini dengan data dari file backup.\n\nLanjutkan?')) {
+    event.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      // Validasi minimal ada key bbr-v2
+      if (!data['bbr-v2']) {
+        alert('❌ File tidak valid atau bukan backup Barberoots.');
+        return;
+      }
+      // Clear localStorage dulu
+      localStorage.clear();
+      // Restore semua key
+      for (const [key, value] of Object.entries(data)) {
+        localStorage.setItem(key, value);
+      }
+      alert('✅ Data berhasil diimport!\n\nHalaman akan di-refresh untuk memuat data baru.');
+      location.reload();
+    } catch(err) {
+      alert('❌ Gagal import: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
 </script>
 </body>
 </html>
