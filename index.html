@@ -2790,27 +2790,51 @@ function exportDataJSON() {
 function importDataJSON(event) {
   const file = event.target.files[0];
   if (!file) return;
-  if (!confirm('⚠️ Import akan MENIMPA semua data yang ada di perangkat ini dengan data dari file backup.\n\nLanjutkan?')) {
+  if (!confirm('⚠️ Import akan MENIMPA semua data yang ada di perangkat ini DAN di Google Sheets dengan data dari file backup.\n\nLanjutkan?')) {
     event.target.value = '';
     return;
   }
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = async function(e) {
     try {
       const data = JSON.parse(e.target.result);
-      // Validasi minimal ada key bbr-v2
       if (!data['bbr-v2']) {
         alert('❌ File tidak valid atau bukan backup Barberoots.');
         return;
       }
-      // Clear localStorage dulu
+      // Restore ke localStorage dulu
       localStorage.clear();
-      // Restore semua key
       for (const [key, value] of Object.entries(data)) {
         localStorage.setItem(key, value);
       }
-      alert('✅ Data berhasil diimport!\n\nHalaman akan di-refresh untuk memuat data baru.');
-      location.reload();
+      load();
+
+      // Push ke Google Sheets via bulkRestore
+      if (isOnline()) {
+        setStatus('⏳ Mengupload data ke Google Sheets...', 'info');
+        try {
+          const payload = {
+            barbers:    S.barbers    || [],
+            penjualan:  S.penjualan  || [],
+            konsinyasi: S.konsinyasi || []
+          };
+          const res = await gasCall('bulkRestore', { data: payload });
+          if (res.ok) {
+            setStatus(`✅ Berhasil restore: ${res.restored.barbers} barber, ${res.restored.penjualan} penjualan, ${res.restored.konsinyasi} konsinyasi`, 'success');
+            // Reload dari Sheets untuk konfirmasi
+            setTimeout(() => loadFromSheets(), 1500);
+          } else {
+            setStatus('⚠ Upload ke Sheets gagal: ' + res.error, 'error');
+            renderBarber();
+          }
+        } catch(err) {
+          setStatus('⚠ Gagal konek Sheets, data tersimpan lokal saja', 'warning');
+          renderBarber();
+        }
+      } else {
+        alert('✅ Data berhasil diimport secara lokal.');
+        location.reload();
+      }
     } catch(err) {
       alert('❌ Gagal import: ' + err.message);
     }
