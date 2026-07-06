@@ -167,6 +167,7 @@ tbody td{padding:9px 12px;color:var(--ink-mid);vertical-align:middle;}
   .page-title{font-size:22px;}
   .stats-grid{grid-template-columns:1fr 1fr;}
   .product-row{grid-template-columns:1fr 60px;}
+  #lap-grid{grid-template-columns:1fr!important;}
 }
 
 /* PRINT */
@@ -189,6 +190,7 @@ tbody td{padding:9px 12px;color:var(--ink-mid);vertical-align:middle;}
   <div class="nav-item" onclick="nav('penjualan')" data-page="penjualan">🛒 Data Penjualan</div>
   <div class="nav-item" onclick="nav('konsinyasi')" data-page="konsinyasi">📦 Konsinyasi</div>
   <div class="nav-item" onclick="nav('riwayat')" data-page="riwayat">📋 Riwayat</div>
+  <div class="nav-item" onclick="nav('laporan')" data-page="laporan">📊 Laporan</div>
   <div class="nav-item" onclick="nav('settings')" data-page="settings">⚙ Pengaturan Invoice</div>
   <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 8px;">
     <button onclick="exportDataJSON()" style="background:#2d6a4f;color:#fff;border:none;border-radius:6px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">⬇ Export Data</button>
@@ -336,6 +338,66 @@ tbody td{padding:9px 12px;color:var(--ink-mid);vertical-align:middle;}
       <table>
         <thead><tr><th>Invoice</th><th>Tanggal</th><th>Barber</th><th>Items</th><th>Total</th><th>Dibayar</th><th>Sisa</th><th>Status</th><th>Aksi</th></tr></thead>
         <tbody id="tb-riwayat"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAPORAN ===== -->
+<div id="page-laporan" class="page">
+  <div class="page-header">
+    <div><h1 class="page-title">Laporan</h1><p class="page-subtitle">Ranking barber &amp; produk per bulan, dan tren dari waktu ke waktu</p></div>
+    <div class="btn-group">
+      <button class="btn btn-outline" onclick="exportPDFLaporan()">⬇ Export PDF</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="sec-title-bar" style="margin-top:0">Pilih Bulan</div>
+    <div class="form-grid" style="grid-template-columns:220px">
+      <div class="form-group"><label>Bulan Laporan</label><input type="month" id="lap-bulan" onchange="renderLaporan()"></div>
+    </div>
+  </div>
+
+  <div class="stats-grid" style="margin-bottom:1rem">
+    <div class="stat-card"><div class="stat-label">Total Transaksi</div><div class="stat-value" id="lap-total-trx">0</div><div class="stat-meta" id="lap-periode-label">—</div></div>
+    <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value" id="lap-total-rev" style="font-size:17px">Rp 0</div><div class="stat-meta">Bulan terpilih</div></div>
+    <div class="stat-card"><div class="stat-label">Barber Teratas</div><div class="stat-value" id="lap-top-barber" style="font-size:15px">—</div><div class="stat-meta">Revenue tertinggi</div></div>
+    <div class="stat-card"><div class="stat-label">Produk Terlaris</div><div class="stat-value" id="lap-top-produk" style="font-size:15px">—</div><div class="stat-meta">Qty tertinggi</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem" id="lap-grid">
+    <div class="card">
+      <div class="sec-title-bar" style="margin-top:0">🏆 Ranking Barber</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Barber</th><th>Revenue</th><th>Qty</th><th>Trx</th></tr></thead>
+          <tbody id="tb-lap-barber"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-title-bar" style="margin-top:0">🔥 Ranking Produk</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Produk</th><th>Qty</th><th>Revenue</th></tr></thead>
+          <tbody id="tb-lap-produk"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title-bar" style="margin-top:0">📊 Perbandingan Bulanan</div>
+    <div class="form-grid" style="margin-bottom:1rem">
+      <div class="form-group"><label>Dari Bulan</label><input type="month" id="lap-tren-dari" onchange="renderLaporanPivot()"></div>
+      <div class="form-group"><label>Sampai Bulan</label><input type="month" id="lap-tren-sampai" onchange="renderLaporanPivot()"></div>
+    </div>
+    <div id="lap-pivot-highlight" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.1rem"></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr id="lap-pivot-head"></tr></thead>
+        <tbody id="tb-lap-pivot"></tbody>
       </table>
     </div>
   </div>
@@ -902,6 +964,7 @@ function nav(pg){
   if(pg==='penjualan'){ fillBarberSel('ep-barber'); renderPenjualan(); }
   if(pg==='konsinyasi'){ fillBarberSel('ek-barber'); renderKons(); renderTagihan(); updateKStats(); }
   if(pg==='riwayat'){ fillRwFilters(); renderRiwayat(); }
+  if(pg==='laporan') initLaporan();
   if(pg==='settings') loadSettings();
 }
 
@@ -1863,6 +1926,137 @@ function exportNotaKonsPDF(){
   doc.save(`Nota_Konsinyasi_${notaNo}.pdf`);
 }
 
+function exportNotaTagihanPDF(id){
+  const k = S.konsinyasi.find(x=>x.id===id); if(!k) return;
+  const c = getCfg();
+  const barber = S.barbers.find(b=>b.id===k.barberId);
+  const items = k.items || [{produk:k.produk||'—', terjual:k.terjual||0, retur:k.retur||0, harga:k.harga||0}];
+  const totalNilai = items.reduce((a,i)=>a+((i.terjual||0)*(i.harga||0)), 0);
+  const sisa = Math.max(0, totalNilai - (k.dibayar||0));
+  const totalRetur = items.reduce((a,i)=>a+(i.retur||0), 0);
+  const notaNo = `TAGIH-${k.id}`;
+  const cv = c.cv; const bank = c.bank; const rek = c.rekening; const an = c.atasnama;
+
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({unit:'mm', format:'a4'});
+  const W = 210; let y = 0;
+
+  // Header bar
+  doc.setFillColor(26,26,26); doc.rect(0,0,W,30,'F');
+  doc.setFillColor(216,90,48); doc.rect(0,30,W,3,'F');
+
+  if(c.logo){
+    try{ doc.addImage(c.logo,'PNG',10,4,45,20,'','FAST'); }
+    catch(e){
+      doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold');
+      doc.text(c.brand||'BEIVZ',10,18);
+    }
+  } else {
+    doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold');
+    doc.text(c.brand||'BEIVZ',10,18);
+  }
+  doc.setTextColor(200,200,200); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  if(cv) doc.text(cv,10,25);
+  doc.setTextColor(255,255,255); doc.setFontSize(14); doc.setFont('helvetica','bold');
+  doc.text('NOTA PENAGIHAN',W-12,13,{align:'right'});
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(216,90,48);
+  doc.text(notaNo,W-12,20,{align:'right'});
+  doc.setTextColor(200,200,200); doc.setFontSize(8);
+  doc.text(`Tgl: ${fDate(new Date().toISOString().split('T')[0])}`,W-12,26,{align:'right'});
+  y = 38;
+
+  // Info block
+  doc.setFillColor(250,236,231); doc.rect(10,y,W-20,7,'F');
+  doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(216,90,48);
+  doc.text('PENAGIHAN PENJUALAN KONSINYASI',W/2,y+4.5,{align:'center'});
+  y += 11;
+
+  // Barber info
+  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30);
+  doc.text(k.barberNama,12,y); y+=6;
+  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(100,100,100);
+  if(barber?.kota){doc.text(barber.kota,12,y); y+=4;}
+  if(barber?.telp){doc.text(barber.telp,12,y); y+=4;}
+  if(k.jatuhTempo){doc.setTextColor(163,45,45); doc.text(`Jatuh Tempo: ${fDate(k.jatuhTempo)}`,12,y); y+=4;}
+  y+=4;
+
+  doc.autoTable({
+    startY: y, margin:{left:10,right:10},
+    head:[['Produk','Terjual','Harga/pcs','Nilai']],
+    body: items.map(i=>[i.produk, `${i.terjual||0} pcs`, fRp(i.harga), fRp((i.terjual||0)*(i.harga||0))]),
+    headStyles:{fillColor:[26,26,26], fontSize:9},
+    styles:{fontSize:9},
+    columnStyles:{1:{halign:'center',cellWidth:22},2:{halign:'right',cellWidth:34},3:{halign:'right',cellWidth:36,fontStyle:'bold',textColor:[216,90,48]}}
+  });
+  y = doc.lastAutoTable.finalY + 5;
+
+  if(totalRetur>0){
+    doc.setFontSize(7.5); doc.setFont('helvetica','italic'); doc.setTextColor(130,130,130);
+    doc.text(`Catatan: ${totalRetur} pcs produk sudah diretur dan tidak termasuk dalam tagihan ini.`,12,y); y+=6;
+  }
+
+  // Totals block
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(100,100,100);
+  doc.text('Total Nilai Terjual',W-70,y+5);
+  doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30); doc.text(fRp(totalNilai),W-10,y+5,{align:'right'}); y+=7;
+  doc.setFont('helvetica','normal'); doc.setTextColor(100,100,100); doc.text('Sudah Dibayar',W-70,y+5);
+  doc.setFont('helvetica','bold'); doc.setTextColor(59,109,17); doc.text(fRp(k.dibayar||0),W-10,y+5,{align:'right'}); y+=7;
+  doc.setDrawColor(216,90,48); doc.line(W-70,y,W-10,y); y+=4;
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30); doc.text('Sisa Tagihan',W-70,y+5);
+  doc.setTextColor(sisa>0?163:59,sisa>0?45:109,sisa>0?45:17); doc.text(fRp(sisa),W-10,y+5,{align:'right'}); y+=14;
+
+  // Riwayat pembayaran
+  if(k.payments?.length){
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(100,100,100);
+    doc.text('Riwayat Pembayaran:',10,y); y+=4;
+    doc.setFont('helvetica','normal');
+    k.payments.forEach((p,i)=>{
+      doc.setTextColor(120,120,120);
+      doc.text(`${i+1}. ${fDate(p.tgl)} · ${p.metode}`,10,y+4);
+      doc.setTextColor(59,109,17); doc.text(fRp(p.jumlah),W-10,y+4,{align:'right'});
+      y+=6;
+    });
+    y+=4;
+  }
+
+  // Bottom: catatan + owner
+  doc.setDrawColor(220,220,220); doc.line(10,y,W-10,y); y+=6;
+  const catatan = k.catatan||'';
+  if(catatan){
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(120,120,120);
+    doc.text('CATATAN',12,y); y+=5;
+    doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(80,80,80);
+    const cLines = doc.splitTextToSize(catatan, W-24);
+    doc.text(cLines,12,y); y += cLines.length*4+4;
+  }
+  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30);
+  doc.text(c.ownerName||'Habib Muhammad',12,y+4);
+  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(120,120,120);
+  doc.text(`Owner, ${c.brand||'BEIVZ'}`,12,y+9);
+  y += 18;
+
+  // Bank detail
+  if(bank||rek){
+    doc.setDrawColor(210,210,210); doc.line(10,y,W-10,y); y+=6;
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30);
+    doc.text('Payment Detail',10,y);
+    doc.text('Other Information',W/2+5,y);
+    y+=5;
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+    const rows=[[bank?`Bank: ${bank}`:'',''],[an?`A.n: ${an}`:'',''],[rek?`No. Rek: ${rek}`:'',' '],[`Ref: ${notaNo}`,'Customer Reference :']];
+    rows.forEach(([l,r])=>{
+      doc.setTextColor(60,60,60); if(l) doc.text(l,10,y);
+      doc.setTextColor(120,120,120); if(r) doc.text(r,W/2+5,y);
+      y+=4.5;
+    });
+  }
+
+  doc.setFontSize(7); doc.setTextColor(150,150,150);
+  doc.text(`Nota Penagihan #${notaNo} · ${cv||'BEIVZ'} · Page 1 of 1`,W/2,288,{align:'center'});
+
+  doc.save(`Nota_Penagihan_${k.barberNama.replace(/\s+/g,'_')}_${notaNo}.pdf`);
+}
+
 function updateKStats(){
   const aktif = S.konsinyasi.filter(k=>k.status==='Aktif').length;
   const kirim = S.konsinyasi.reduce((a,k)=>a+k.qty, 0);
@@ -1948,7 +2142,10 @@ function renderTagihan(){
       <td style="color:var(--danger)">${fRp(Math.max(0,sisa))}</td>
       <td>${k.jatuhTempo?fDate(k.jatuhTempo):'—'}</td>
       <td><span class="badge ${badge}">${label}</span></td>
-      <td><button class="btn btn-amber btn-xs" onclick="openKonsUpdate(${k.id})">+ Bayar</button></td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-amber btn-xs" onclick="openKonsUpdate(${k.id})">+ Bayar</button>
+        <button class="btn btn-outline btn-xs" onclick="exportNotaTagihanPDF(${k.id})" style="margin-left:4px">🧾 Nota</button>
+      </td>
     </tr>`;
   }).join('');
 }
@@ -2046,6 +2243,309 @@ function renderRiwayat(){
       </div></td>
     </tr>`;
   }).join('');
+}
+
+// ========== LAPORAN ==========
+
+function initLaporan(){
+  const bulanInput = document.getElementById('lap-bulan');
+  if(!bulanInput.value) bulanInput.value = new Date().toISOString().slice(0,7);
+  const trenDari = document.getElementById('lap-tren-dari');
+  const trenSampai = document.getElementById('lap-tren-sampai');
+  if(!trenSampai.value) trenSampai.value = new Date().toISOString().slice(0,7);
+  if(!trenDari.value){
+    const d = new Date(); d.setMonth(d.getMonth()-5);
+    trenDari.value = d.toISOString().slice(0,7);
+  }
+  renderLaporan();
+  renderLaporanPivot();
+}
+
+function renderLaporanPivot(){
+  const dari = document.getElementById('lap-tren-dari').value;
+  const sampai = document.getElementById('lap-tren-sampai').value;
+  if(!dari||!sampai) return;
+  const months = monthsBetween(dari,sampai);
+
+  // Build revenue map: barberId -> month -> revenue
+  const revMap = {};
+  const barberNames = {};
+  S.penjualan.forEach(p=>{
+    if(!p.tgl) return;
+    const ym = p.tgl.slice(0,7);
+    if(months.indexOf(ym)===-1) return;
+    const bid = p.barberId;
+    if(!revMap[bid]) revMap[bid] = {};
+    revMap[bid][ym] = (revMap[bid][ym]||0) + p.total;
+    barberNames[bid] = p.barberNama;
+  });
+
+  const barberIds = Object.keys(revMap);
+
+  // ---- Highlight naik/turun (bandingkan 2 bulan terakhir dalam rentang) ----
+  const hlEl = document.getElementById('lap-pivot-highlight');
+  if(months.length < 2){
+    hlEl.innerHTML = `<div class="text-sm text-muted" style="grid-column:1/-1">Pilih rentang minimal 2 bulan untuk melihat barber yang naik/turun.</div>`;
+  } else {
+    const lastM = months[months.length-1];
+    const prevM = months[months.length-2];
+    const deltas = barberIds.map(bid=>{
+      const last = (revMap[bid][lastM]||0);
+      const prev = (revMap[bid][prevM]||0);
+      return { nama: barberNames[bid], last, prev, delta: last-prev };
+    }).filter(d=>d.last>0||d.prev>0);
+
+    const naik = [...deltas].sort((a,b)=>b.delta-a.delta)[0];
+    const turun = [...deltas].sort((a,b)=>a.delta-b.delta)[0];
+
+    function pctLabel(d){
+      if(d.prev===0 && d.last>0) return 'Baru bulan ini';
+      if(d.prev===0) return '—';
+      const pct = (d.delta/d.prev*100).toFixed(0);
+      return `${pct>0?'+':''}${pct}% (${fRp(Math.abs(d.delta))}) vs ${fBulan(prevM)}`;
+    }
+
+    hlEl.innerHTML = `
+      <div class="stat-card" style="border-color:var(--success)">
+        <div class="stat-label" style="color:var(--success)">📈 Naik Tertinggi — ${fBulan(lastM)}</div>
+        <div class="stat-value" style="font-size:15px;color:var(--success)">${naik&&naik.delta>0?naik.nama:'—'}</div>
+        <div class="stat-meta">${naik&&naik.delta>0?pctLabel(naik):'Tidak ada kenaikan'}</div>
+      </div>
+      <div class="stat-card" style="border-color:var(--danger)">
+        <div class="stat-label" style="color:var(--danger)">📉 Turun Tertinggi — ${fBulan(lastM)}</div>
+        <div class="stat-value" style="font-size:15px;color:var(--danger)">${turun&&turun.delta<0?turun.nama:'—'}</div>
+        <div class="stat-meta">${turun&&turun.delta<0?pctLabel(turun):'Tidak ada penurunan'}</div>
+      </div>`;
+  }
+
+  // ---- Tabel Pivot ----
+  const head = document.getElementById('lap-pivot-head');
+  head.innerHTML = `<th>Barber</th>${months.map(m=>`<th class="text-right">${fBulan(m)}</th>`).join('')}<th class="text-right">Total</th>`;
+
+  const rows = barberIds.map(bid=>{
+    const perBulan = months.map(m=>revMap[bid][m]||0);
+    const total = perBulan.reduce((a,v)=>a+v,0);
+    return { nama: barberNames[bid], perBulan, total };
+  }).sort((a,b)=>b.total-a.total);
+
+  const tb = document.getElementById('tb-lap-pivot');
+  if(!rows.length){
+    tb.innerHTML = `<tr><td colspan="${months.length+2}"><div class="empty-state"><div class="empty-icon">📊</div><p>Belum ada data di rentang bulan ini.</p></div></td></tr>`;
+  } else {
+    const grandTotals = months.map((m,i)=>rows.reduce((a,r)=>a+r.perBulan[i],0));
+    const grandTotal = grandTotals.reduce((a,v)=>a+v,0);
+    tb.innerHTML = rows.map(r=>`<tr>
+      <td><strong>${r.nama}</strong></td>
+      ${r.perBulan.map(v=>`<td class="text-right mono">${v?fRp(v):'—'}</td>`).join('')}
+      <td class="text-right text-coral fw6">${fRp(r.total)}</td>
+    </tr>`).join('') + `<tr style="background:var(--coral-light)">
+      <td class="fw6">Total</td>
+      ${grandTotals.map(v=>`<td class="text-right mono fw6">${fRp(v)}</td>`).join('')}
+      <td class="text-right text-coral fw6">${fRp(grandTotal)}</td>
+    </tr>`;
+  }
+}
+
+function fBulan(ym){
+  if(!ym) return '—';
+  const parts = ym.split('-').map(Number);
+  const y=parts[0], m=parts[1];
+  const names=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  return `${names[m-1]} ${y}`;
+}
+
+function monthsBetween(dari,sampai){
+  const out=[];
+  let parts = dari.split('-').map(Number);
+  let y=parts[0], m=parts[1];
+  const eparts = sampai.split('-').map(Number);
+  const ey=eparts[0], em=eparts[1];
+  let guard=0;
+  while((y<ey || (y===ey && m<=em)) && guard<240){
+    out.push(`${y}-${String(m).padStart(2,'0')}`);
+    m++; if(m>12){m=1;y++;}
+    guard++;
+  }
+  return out;
+}
+
+function renderLaporan(){
+  const bulan = document.getElementById('lap-bulan').value;
+  if(!bulan) return;
+  const data = S.penjualan.filter(p=>p.tgl && p.tgl.slice(0,7)===bulan);
+
+  document.getElementById('lap-periode-label').textContent = fBulan(bulan);
+  document.getElementById('lap-total-trx').textContent = data.length;
+  const totalRev = data.reduce((a,p)=>a+p.total,0);
+  document.getElementById('lap-total-rev').textContent = fRp(totalRev);
+
+  // Ranking Barber
+  const byBarber = {};
+  data.forEach(p=>{
+    if(!byBarber[p.barberId]) byBarber[p.barberId] = { nama:p.barberNama, revenue:0, qty:0, trx:0 };
+    byBarber[p.barberId].revenue += p.total;
+    byBarber[p.barberId].qty += (p.items||[]).reduce((a,i)=>a+Number(i.qty||0),0);
+    byBarber[p.barberId].trx += 1;
+  });
+  const barberList = Object.values(byBarber).sort((a,b)=>b.revenue-a.revenue);
+  const tbB = document.getElementById('tb-lap-barber');
+  tbB.innerHTML = barberList.length ? barberList.map((b,i)=>`<tr>
+    <td>${i+1}</td><td><strong>${b.nama}</strong></td><td class="text-coral">${fRp(b.revenue)}</td><td>${b.qty}</td><td>${b.trx}</td>
+  </tr>`).join('') : `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📊</div><p>Belum ada data bulan ini.</p></div></td></tr>`;
+  document.getElementById('lap-top-barber').textContent = barberList.length ? barberList[0].nama : '—';
+
+  // Ranking Produk
+  const byProduk = {};
+  data.forEach(p=>{
+    (p.items||[]).forEach(it=>{
+      if(!byProduk[it.produk]) byProduk[it.produk] = { qty:0, revenue:0 };
+      byProduk[it.produk].qty += Number(it.qty||0);
+      byProduk[it.produk].revenue += Number(it.subtotal!=null?it.subtotal:(it.qty||0)*(it.harga||0));
+    });
+  });
+  const produkList = Object.entries(byProduk).map(([nama,v])=>({nama,qty:v.qty,revenue:v.revenue})).sort((a,b)=>b.qty-a.qty);
+  const tbP = document.getElementById('tb-lap-produk');
+  tbP.innerHTML = produkList.length ? produkList.map((p,i)=>`<tr>
+    <td>${i+1}</td><td><strong>${p.nama}</strong></td><td>${p.qty}</td><td class="text-coral">${fRp(p.revenue)}</td>
+  </tr>`).join('') : `<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">🔥</div><p>Belum ada data bulan ini.</p></div></td></tr>`;
+  document.getElementById('lap-top-produk').textContent = produkList.length ? produkList[0].nama : '—';
+}
+
+function exportPDFLaporan(){
+  const bulan = document.getElementById('lap-bulan').value;
+  const data = S.penjualan.filter(p=>p.tgl && p.tgl.slice(0,7)===bulan);
+
+  const byBarber = {};
+  data.forEach(p=>{
+    if(!byBarber[p.barberId]) byBarber[p.barberId] = { nama:p.barberNama, revenue:0, qty:0, trx:0 };
+    byBarber[p.barberId].revenue += p.total;
+    byBarber[p.barberId].qty += (p.items||[]).reduce((a,i)=>a+Number(i.qty||0),0);
+    byBarber[p.barberId].trx += 1;
+  });
+  const barberList = Object.values(byBarber).sort((a,b)=>b.revenue-a.revenue);
+
+  const byProduk = {};
+  data.forEach(p=>{
+    (p.items||[]).forEach(it=>{
+      if(!byProduk[it.produk]) byProduk[it.produk] = { qty:0, revenue:0 };
+      byProduk[it.produk].qty += Number(it.qty||0);
+      byProduk[it.produk].revenue += Number(it.subtotal!=null?it.subtotal:(it.qty||0)*(it.harga||0));
+    });
+  });
+  const produkList = Object.entries(byProduk).map(([nama,v])=>({nama,qty:v.qty,revenue:v.revenue})).sort((a,b)=>b.qty-a.qty);
+
+  const {jsPDF}=window.jspdf; const doc=new jsPDF('landscape');
+
+  // ---- HALAMAN 1: RANKING ----
+  addPDFHdr(doc,`Laporan Bulanan - ${fBulan(bulan)}`,true);
+  doc.setFontSize(9); doc.setTextColor(130,130,130); doc.setFont('helvetica','normal');
+  doc.text(`Total Transaksi: ${data.length}   |   Total Revenue: ${fRp(data.reduce((a,p)=>a+p.total,0))}`,14,36);
+
+  doc.setFontSize(11); doc.setTextColor(26,26,26); doc.setFont('helvetica','bold');
+  doc.text('Ranking Barber',14,46);
+  doc.autoTable({startY:50,
+    head:[['#','Barber','Revenue','Qty','Transaksi']],
+    body: barberList.length ? barberList.map((b,i)=>[i+1,b.nama,fRp(b.revenue),b.qty,b.trx]) : [['—','Belum ada data','—','—','—']],
+    headStyles:{fillColor:[26,26,26]},styles:{fontSize:9},
+    columnStyles:{2:{textColor:[216,90,48],fontStyle:'bold'}},
+    margin:{left:14,right:14}
+  });
+
+  const y = doc.lastAutoTable.finalY + 12;
+  doc.setFontSize(11); doc.setTextColor(26,26,26); doc.setFont('helvetica','bold');
+  doc.text('Ranking Produk',14,y);
+  doc.autoTable({startY:y+4,
+    head:[['#','Produk','Qty Terjual','Revenue']],
+    body: produkList.length ? produkList.map((p,i)=>[i+1,p.nama,p.qty,fRp(p.revenue)]) : [['—','Belum ada data','—','—']],
+    headStyles:{fillColor:[26,26,26]},styles:{fontSize:9},
+    columnStyles:{3:{textColor:[216,90,48],fontStyle:'bold'}},
+    margin:{left:14,right:14}
+  });
+
+  // ---- HALAMAN 2: PERBANDINGAN BULANAN ----
+  const dari = document.getElementById('lap-tren-dari').value;
+  const sampai = document.getElementById('lap-tren-sampai').value;
+  if(dari && sampai){
+    const months = monthsBetween(dari,sampai);
+    const revMap = {}; const barberNames = {};
+    S.penjualan.forEach(p=>{
+      if(!p.tgl) return;
+      const ym = p.tgl.slice(0,7);
+      if(months.indexOf(ym)===-1) return;
+      const bid = p.barberId;
+      if(!revMap[bid]) revMap[bid] = {};
+      revMap[bid][ym] = (revMap[bid][ym]||0) + p.total;
+      barberNames[bid] = p.barberNama;
+    });
+    const barberIds = Object.keys(revMap);
+
+    doc.addPage();
+    addPDFHdr(doc,`Perbandingan Bulanan - ${fBulan(dari)} s/d ${fBulan(sampai)}`,true);
+
+    let yy = 36;
+    if(months.length >= 2){
+      const lastM = months[months.length-1], prevM = months[months.length-2];
+      const deltas = barberIds.map(bid=>{
+        const last=(revMap[bid][lastM]||0), prev=(revMap[bid][prevM]||0);
+        return { nama: barberNames[bid], last, prev, delta: last-prev };
+      }).filter(d=>d.last>0||d.prev>0);
+      const naik = [...deltas].sort((a,b)=>b.delta-a.delta)[0];
+      const turun = [...deltas].sort((a,b)=>a.delta-b.delta)[0];
+
+      doc.setFontSize(9); doc.setFont('helvetica','normal');
+      if(naik && naik.delta>0){
+        doc.setTextColor(59,109,17);
+        doc.text(`▲ Naik Tertinggi (${fBulan(lastM)}): ${naik.nama}, +${fRp(naik.delta)} dibanding ${fBulan(prevM)}`,14,yy);
+        yy+=6;
+      }
+      if(turun && turun.delta<0){
+        doc.setTextColor(163,45,45);
+        doc.text(`▼ Turun Tertinggi (${fBulan(lastM)}): ${turun.nama}, -${fRp(Math.abs(turun.delta))} dibanding ${fBulan(prevM)}`,14,yy);
+        yy+=6;
+      }
+      doc.setTextColor(26,26,26);
+      yy+=4;
+    }
+
+    const rows = barberIds.map(bid=>{
+      const perBulan = months.map(m=>revMap[bid][m]||0);
+      const total = perBulan.reduce((a,v)=>a+v,0);
+      return { nama: barberNames[bid], perBulan, total };
+    }).sort((a,b)=>b.total-a.total);
+    const grandTotals = months.map((m,i)=>rows.reduce((a,r)=>a+r.perBulan[i],0));
+    const grandTotal = grandTotals.reduce((a,v)=>a+v,0);
+
+    doc.autoTable({
+      startY: yy,
+      head: [['Barber',...months.map(fBulan),'Total']],
+      body: rows.length ? [
+        ...rows.map(r=>[r.nama,...r.perBulan.map(v=>v?fRp(v):'—'),fRp(r.total)]),
+        ['Total',...grandTotals.map(v=>fRp(v)),fRp(grandTotal)]
+      ] : [['Belum ada data untuk rentang ini']],
+      headStyles:{fillColor:[26,26,26]},styles:{fontSize:8},
+      columnStyles: rows.length ? {[months.length+1]:{textColor:[216,90,48],fontStyle:'bold'}} : {},
+      margin:{left:14,right:14}
+    });
+  }
+
+  // ---- HALAMAN 3: DETAIL TRANSAKSI ----
+  doc.addPage();
+  addPDFHdr(doc,`Detail Transaksi - ${fBulan(bulan)}`,true);
+  doc.autoTable({
+    startY: 36,
+    head: [['Invoice','Tanggal','Barber','Items','Total','Dibayar','Sisa','Status']],
+    body: data.length ? [...data].sort((a,b)=>a.tgl.localeCompare(b.tgl)).map(p=>{
+      const items=(p.items||[]).map(i=>`${i.produk} x${i.qty}`).join(', ');
+      const sisa=Math.max(0,p.total-(p.dibayar||0));
+      const st=payStatus(p)==='lunas'?'Lunas':payStatus(p)==='sebagian'?'Sebagian':'Belum';
+      return [p.invoice,fDate(p.tgl),p.barberNama,items,fRp(p.total),fRp(p.dibayar||0),fRp(sisa),st];
+    }) : [['—','—','Belum ada transaksi bulan ini','—','—','—','—','—']],
+    headStyles:{fillColor:[26,26,26]},styles:{fontSize:8},
+    columnStyles:{4:{textColor:[216,90,48],fontStyle:'bold'}},
+    margin:{left:14,right:14}
+  });
+
+  addPDFFtr(doc,true); doc.save(`BEIVZ_Laporan_${bulan||'bulan'}.pdf`);
 }
 
 // ========== SETTINGS ==========
